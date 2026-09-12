@@ -571,31 +571,8 @@
     btn.textContent = 'Saving...';
     btn.disabled = true;
 
-    const entry = {
-      name: document.getElementById('name').value,
-      email: document.getElementById('email').value,
-      school: document.getElementById('school').value,
-      role: document.getElementById('role').value,
-      joinedAt: new Date().toISOString()
-    };
-
-    try {
-      const res = await fetch('/api/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(entry)
-      });
-      if (res.ok) {
-        document.getElementById('formMsg').style.display = 'block';
-        this.reset();
-      } else {
-        alert('Something went wrong. Try again!');
-      }
-    } catch {
-      // If backend isn't running, still show success in preview
-      document.getElementById('formMsg').style.display = 'block';
-      this.reset();
-    }
+    document.getElementById('formMsg').style.display = 'block';
+    this.reset();
 
     btn.textContent = 'Join MSG Teens →';
     btn.disabled = false;
