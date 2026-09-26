@@ -234,6 +234,7 @@
 
   /* Sign-up card */
   .signup-form { display: flex; flex-direction: column; gap: 14px; margin-top: 24px; }
+  .signup-form[hidden] { display: none; }
   .signup-form input, .signup-form select {
     padding: 12px 16px; border: 2px solid var(--blue-light);
     border-radius: 10px; font-family: 'DM Sans', sans-serif;
@@ -249,6 +250,18 @@
     transition: background 0.2s;
   }
   .signup-form button:hover { background: #007aaa; }
+  .signup-form button:disabled { opacity: 0.6; cursor: default; }
+  .auth-switch { font-size: 13px; color: var(--grey); text-align: center; }
+  .auth-switch a { color: var(--blue); font-weight: 600; }
+  .account-panel { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+  .account-panel[hidden] { display: none; }
+  .account-name { font-size: 18px; }
+  .account-meta { font-size: 14px; color: var(--grey); display: flex; gap: 12px; flex-wrap: wrap; }
+  .account-panel button {
+    align-self: flex-start; background: none; color: var(--blue);
+    border: 2px solid var(--blue); border-radius: 50px; padding: 10px 24px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
 
   /* ── IMAGES GRID ── */
   .images-section {
@@ -490,10 +503,12 @@
     <p class="col-tag">Join the Community</p>
     <h2 class="col-title">Be part of the change</h2>
     <p class="col-body">Sign up to earn points, get featured, and show adults what teens are really made of.</p>
+
     <form class="signup-form" id="signupForm">
-      <input type="text" placeholder="Your name" id="name" required>
-      <input type="email" placeholder="Email address" id="email" required>
-      <input type="text" placeholder="School name" id="school">
+      <input type="text" placeholder="Your name" id="name" required maxlength="200">
+      <input type="email" placeholder="Email address" id="email" required autocomplete="email">
+      <input type="password" placeholder="Password (at least 6 characters)" id="password" required minlength="6" autocomplete="new-password">
+      <input type="text" placeholder="School name" id="school" maxlength="200">
       <select id="role">
         <option value="">I am a...</option>
         <option value="teen">Teen</option>
@@ -502,8 +517,23 @@
         <option value="community">Community Member</option>
       </select>
       <button type="submit">Join MSG Teens →</button>
+      <p class="auth-switch">Already have an account? <a href="#signup" data-show="login">Log in</a></p>
     </form>
-    <p id="formMsg" style="font-size:13px;color:var(--blue);margin-top:10px;display:none">✓ You're in! Welcome to MSG Teens.</p>
+
+    <form class="signup-form" id="loginForm" hidden>
+      <input type="email" placeholder="Email address" id="loginEmail" required autocomplete="email">
+      <input type="password" placeholder="Password" id="loginPassword" required autocomplete="current-password">
+      <button type="submit">Log In →</button>
+      <p class="auth-switch">New here? <a href="#signup" data-show="signup">Create an account</a></p>
+    </form>
+
+    <div id="accountPanel" class="account-panel" hidden>
+      <p class="account-name">Welcome, <strong id="accountName"></strong>!</p>
+      <p class="account-meta"><span id="accountSchool"></span><span id="accountPoints"></span></p>
+      <button type="button" id="logoutBtn">Log Out</button>
+    </div>
+
+    <p id="formMsg" style="font-size:13px;margin-top:10px;display:none"></p>
   </div>
 </section>
 
@@ -564,19 +594,117 @@
   <div style="font-size:12px">© 2026 MSG Teens. All rights reserved.</div>
 </footer>
 
+<!-- config.js is generated at build time from Vercel environment variables (scripts/build-config.js) -->
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  document.getElementById('signupForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn = this.querySelector('button');
-    btn.textContent = 'Saving...';
+  const cfg = window.MSG_CONFIG;
+  const db = cfg && window.supabase ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey) : null;
+
+  const signupForm = document.getElementById('signupForm');
+  const loginForm = document.getElementById('loginForm');
+  const accountPanel = document.getElementById('accountPanel');
+  const msg = document.getElementById('formMsg');
+  const navCta = document.querySelector('.nav-cta');
+
+  function showMessage(text, isError) {
+    msg.textContent = text;
+    msg.style.color = isError ? '#d33' : 'var(--blue)';
+    msg.style.display = 'block';
+  }
+
+  function showView(view) {
+    signupForm.hidden = view !== 'signup';
+    loginForm.hidden = view !== 'login';
+    accountPanel.hidden = view !== 'account';
+    navCta.textContent = view === 'account' ? 'My Account' : 'Join Now';
+  }
+
+  async function showAccount(user) {
+    const { data: profile } = await db.from('profiles')
+      .select('name, school, points').eq('id', user.id).single();
+    document.getElementById('accountName').textContent = profile ? profile.name : user.email;
+    document.getElementById('accountSchool').textContent = profile && profile.school ? profile.school : '';
+    document.getElementById('accountPoints').textContent = '🏆 ' + (profile ? profile.points : 0) + ' points';
+    showView('account');
+  }
+
+  async function withButton(form, busyText, fn) {
+    const btn = form.querySelector('button');
+    const label = btn.textContent;
+    btn.textContent = busyText;
     btn.disabled = true;
-
-    document.getElementById('formMsg').style.display = 'block';
-    this.reset();
-
-    btn.textContent = 'Join MSG Teens →';
+    msg.style.display = 'none';
+    try { await fn(); }
+    catch (err) { console.error(err); showMessage('Could not connect. Check your internet and try again.', true); }
+    btn.textContent = label;
     btn.disabled = false;
+  }
+
+  document.querySelectorAll('[data-show]').forEach(link => link.addEventListener('click', e => {
+    e.preventDefault();
+    msg.style.display = 'none';
+    showView(link.dataset.show);
+  }));
+
+  signupForm.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!db) return showMessage('Sign-ups are not configured yet.', true);
+    withButton(signupForm, 'Creating account...', async () => {
+      const { data, error } = await db.auth.signUp({
+        email: document.getElementById('email').value.trim(),
+        password: document.getElementById('password').value,
+        options: {
+          emailRedirectTo: window.location.origin,
+          data: {
+            name: document.getElementById('name').value.trim(),
+            school: document.getElementById('school').value.trim(),
+            role: document.getElementById('role').value
+          }
+        }
+      });
+      if (error) return showMessage(error.message, true);
+      signupForm.reset();
+      if (data.session) {
+        showMessage("✓ You're in! Welcome to MSG Teens.");
+      } else {
+        showMessage('✓ Almost done! Check your email for a link to confirm your account.');
+        showView('login');
+      }
+    });
   });
+
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!db) return showMessage('Log-in is not configured yet.', true);
+    withButton(loginForm, 'Logging in...', async () => {
+      const { error } = await db.auth.signInWithPassword({
+        email: document.getElementById('loginEmail').value.trim(),
+        password: document.getElementById('loginPassword').value
+      });
+      if (error) return showMessage(error.message, true);
+      loginForm.reset();
+    });
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await db.auth.signOut();
+    msg.style.display = 'none';
+  });
+
+  if (db) {
+    // Fires on page load (restoring a saved session), sign-in, sign-out,
+    // and when returning from the email confirmation link.
+    db.auth.onAuthStateChange((event, session) => {
+      // Defer database calls out of the auth callback, per Supabase docs.
+      setTimeout(() => {
+        if (session) showAccount(session.user);
+        else showView('signup');
+      }, 0);
+    });
+  } else {
+    console.warn(cfg ? 'Supabase library failed to load.' : 'config.js missing: set SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY in Vercel and redeploy.');
+  }
 </script>
 </body>
 </html>
