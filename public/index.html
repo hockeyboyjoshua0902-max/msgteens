@@ -324,6 +324,42 @@
   }
   .btn-white:hover { background: var(--blue-light); }
 
+  /* ── STORY FORM ── */
+  .story-section { padding: 64px 48px; background: var(--blue-pale); border-top: 3px solid var(--blue-light); }
+  .story-card {
+    max-width: 720px; margin: 0 auto; background: var(--white);
+    border-radius: var(--radius); padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .story-card[hidden], .story-form [hidden] { display: none; }
+  .story-form { display: flex; flex-direction: column; gap: 28px; }
+  .story-form fieldset { border: none; display: flex; flex-direction: column; gap: 14px; }
+  .story-form legend {
+    font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; margin-bottom: 4px;
+  }
+  .story-form .hint { font-size: 14px; color: #555; margin-top: -6px; }
+  .story-form label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600; }
+  .story-form label.choice { flex-direction: row; align-items: center; gap: 10px; font-weight: 500; }
+  .story-form .req { color: var(--blue); }
+  .story-form input[type=text], .story-form input[type=number], .story-form select, .story-form textarea {
+    padding: 12px 16px; border: 2px solid var(--blue-light); border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 400;
+    outline: none; background: var(--white); transition: border-color 0.2s;
+  }
+  .story-form textarea { min-height: 120px; resize: vertical; }
+  .story-form input:focus, .story-form select:focus, .story-form textarea:focus { border-color: var(--blue); }
+  .story-form input[type=file] { font-size: 14px; font-weight: 400; }
+  .story-form input[type=radio], .story-form input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--blue); }
+  .story-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .story-form button[type=submit] {
+    align-self: flex-start; background: var(--blue); color: var(--white); border: none;
+    border-radius: 50px; padding: 14px 36px; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+  }
+  .story-form button[type=submit]:hover { background: #007aaa; }
+  .story-form button[type=submit]:disabled { opacity: 0.6; cursor: default; }
+  .story-msg { font-size: 14px; }
+  .story-login { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+
   /* ── FOOTER ── */
   footer {
     background: #0f0f0f; color: #888;
@@ -355,6 +391,9 @@
     .col-card { border-right: none; border-bottom: 2px solid var(--blue-light); }
     .img-grid { grid-template-columns: 1fr 1fr; }
     .submit-banner { flex-direction: column; text-align: center; }
+    .story-section { padding: 48px 16px; }
+    .story-card { padding: 28px 20px; }
+    .story-form .row { grid-template-columns: 1fr; }
     footer { flex-direction: column; text-align: center; }
   }
 </style>
@@ -412,7 +451,7 @@
     <p class="hero-sub">Teens are changing the world, one story at a time. We showcase the real side of teenagers that adults rarely see.</p>
     <div class="hero-btns">
       <a href="#stories" class="btn-primary">Read Their Stories</a>
-      <a href="#submit" class="btn-secondary">Submit a Story</a>
+      <a href="#story" class="btn-secondary">Submit a Story</a>
     </div>
   </div>
 
@@ -545,27 +584,27 @@
   </div>
   <div class="img-grid">
     <div class="img-tile">
-      <img src="teen1.jpg" alt="Teen volunteers collecting trash" onerror="this.parentElement.style.background='#A3CEF1'">
+      <img src="teen1.jpg" alt="Teen volunteers collecting trash" onerror="this.parentElement.style.background='#A3CEF1';this.style.visibility='hidden'">
       <div class="img-tile-label">Community Cleanup</div>
     </div>
     <div class="img-tile">
-      <img src="teen2.jpg" alt="Teens doing park work" onerror="this.parentElement.style.background='#0099CC'">
+      <img src="teen2.jpg" alt="Teens doing park work" onerror="this.parentElement.style.background='#0099CC';this.style.visibility='hidden'">
       <div class="img-tile-label">Park Restoration</div>
     </div>
     <div class="img-tile">
-      <img src="teen3.jpg" alt="Teens gardening" onerror="this.parentElement.style.background='#A3CEF1'">
+      <img src="teen3.jpg" alt="Teens gardening" onerror="this.parentElement.style.background='#A3CEF1';this.style.visibility='hidden'">
       <div class="img-tile-label">Urban Gardening</div>
     </div>
     <div class="img-tile">
-      <img src="teen4.jpg" alt="Teens serving food" onerror="this.parentElement.style.background='#0099CC'">
+      <img src="teen4.jpg" alt="Teens serving food" onerror="this.parentElement.style.background='#0099CC';this.style.visibility='hidden'">
       <div class="img-tile-label">Food Service Volunteer</div>
     </div>
     <div class="img-tile">
-      <img src="teen5.jpg" alt="Teens at food drive" onerror="this.parentElement.style.background='#A3CEF1'">
+      <img src="teen5.jpg" alt="Teens at food drive" onerror="this.parentElement.style.background='#A3CEF1';this.style.visibility='hidden'">
       <div class="img-tile-label">Local Food Drive</div>
     </div>
     <div class="img-tile">
-      <img src="teen6.jpg" alt="Teen painting mural" onerror="this.parentElement.style.background='#0099CC'">
+      <img src="teen6.jpg" alt="Teen painting mural" onerror="this.parentElement.style.background='#0099CC';this.style.visibility='hidden'">
       <div class="img-tile-label">Community Mural</div>
     </div>
   </div>
@@ -574,8 +613,65 @@
 <!-- SUBMIT STORY BANNER -->
 <section class="submit-banner" id="submit">
   <h2>Know a teen doing something <em>incredible?</em><br>Their story belongs here.</h2>
-  <a href="#" class="btn-white">Submit a Story →</a>
+  <a href="#story" class="btn-white">Submit a Story →</a>
 </section>
+
+<!-- SUBMIT A STORY FORM (saves to Supabase: stories table + story-photos bucket) -->
+<section class="story-section" id="story">
+  <div class="section-header">
+    <h2>Submit a Teen Story</h2>
+    <p>Share a story about a teen who made a difference, overcame a challenge, or was misunderstood.</p>
+  </div>
+
+  <div class="story-card story-login" id="storyLogin">
+    <p>Log in or create a free account to submit a story.</p>
+    <a href="#signup" class="btn-primary">Log In / Sign Up</a>
+  </div>
+
+  <div class="story-card" id="storyCard" hidden>
+    <form class="story-form" id="storyForm">
+      <fieldset>
+        <legend>Who is being nominated? <span class="req">*</span></legend>
+        <label class="choice"><input type="radio" name="submissionType" value="self" required> I am submitting my own story.</label>
+        <label class="choice"><input type="radio" name="submissionType" value="nominee" required> I am nominating someone else.</label>
+      </fieldset>
+
+      <fieldset id="storyDetails" hidden>
+        <legend data-self="My Story" data-nominee="Someone Else’s Story"></legend>
+        <p class="hint" data-self="Share your own experience and tell us what happened." data-nominee="Tell us about the teen you are nominating and why their story matters."></p>
+        <label><span><span data-self="Name" data-nominee="Teen’s name"></span> <span class="req">*</span></span>
+          <input type="text" id="teenName" required maxlength="200"></label>
+        <div class="row">
+          <label><span><span data-self="Age" data-nominee="Teen’s age"></span> <span class="req">*</span></span>
+            <input type="number" id="teenAge" required min="5" max="25"></label>
+          <label><span data-self="Grade level" data-nominee="Teen’s grade level"></span>
+            <select id="gradeLevel"><option value="">Choose…</option><option>6th</option><option>7th</option><option>8th</option><option>9th</option><option>10th</option><option>11th</option><option>12th</option><option>Other</option></select></label>
+        </div>
+        <label><span><span data-self="School name" data-nominee="Teen’s school name"></span> <span class="req">*</span></span>
+          <input type="text" id="storySchool" required maxlength="200"></label>
+        <label data-only="self"><span>City / State <span class="req">*</span></span>
+          <input type="text" id="cityState" maxlength="200" placeholder="e.g. Pittsburgh, PA"></label>
+        <label><span><span data-self="What happened?" data-nominee="What did the teen do?"></span> <span class="req">*</span></span>
+          <textarea id="storyBody" required maxlength="10000"></textarea></label>
+        <label><span>Why is this story important? <span class="req">*</span></span>
+          <textarea id="whyImportant" required maxlength="10000"></textarea></label>
+      </fieldset>
+
+      <fieldset id="storyPhoto" hidden>
+        <legend>Photo &amp; Permission</legend>
+        <label>Upload a photo (optional, max 5 MB)
+          <input type="file" id="photoFile" accept="image/jpeg,image/png,image/webp,image/heic,image/heif"></label>
+        <label>Photo description (optional)
+          <input type="text" id="photoDescription" maxlength="1000"></label>
+        <label class="choice"><input type="checkbox" id="permission" required> MSG Teens has permission to share this story and photo. <span class="req">*</span></label>
+      </fieldset>
+
+      <button type="submit" id="storySubmit" hidden>Submit Story →</button>
+      <p class="story-msg" id="storyMsg" hidden></p>
+    </form>
+  </div>
+</section>
+
 
 <!-- FOOTER -->
 <footer>
@@ -587,7 +683,7 @@
     <a href="#">Home</a>
     <a href="#">Wall of Fame</a>
     <a href="#">Blog</a>
-    <a href="#">Submit a Story</a>
+    <a href="#story">Submit a Story</a>
     <a href="#">About</a>
     <a href="#">Contact</a>
   </div>
@@ -620,9 +716,12 @@
     navCta.textContent = view === 'account' ? 'My Account' : 'Join Now';
   }
 
+  let currentProfile = null;
+
   async function showAccount(user) {
     const { data: profile } = await db.from('profiles')
       .select('name, school, points').eq('id', user.id).single();
+    currentProfile = profile;
     document.getElementById('accountName').textContent = profile ? profile.name : user.email;
     document.getElementById('accountSchool').textContent = profile && profile.school ? profile.school : '';
     document.getElementById('accountPoints').textContent = '🏆 ' + (profile ? profile.points : 0) + ' points';
@@ -692,14 +791,104 @@
     msg.style.display = 'none';
   });
 
+  // ── Submit a Story ──
+  const storyForm = document.getElementById('storyForm');
+  const storyMsg = document.getElementById('storyMsg');
+  const storyBtn = document.getElementById('storySubmit');
+  const field = id => document.getElementById(id);
+  let currentUser = null;
+
+  function setStoryAccess(user) {
+    currentUser = user;
+    field('storyLogin').hidden = !!user;
+    field('storyCard').hidden = !user;
+  }
+
+  function showStoryMessage(text, isError) {
+    storyMsg.textContent = text;
+    storyMsg.style.color = isError ? '#d33' : 'var(--blue)';
+    storyMsg.hidden = false;
+  }
+
+  function setStorySteps(visible) {
+    ['storyDetails', 'storyPhoto', 'storySubmit'].forEach(id => { field(id).hidden = !visible; });
+  }
+
+  function applySubmissionType(type) {
+    setStorySteps(true);
+    storyForm.querySelectorAll('[data-self]').forEach(el => { el.textContent = el.dataset[type]; });
+    storyForm.querySelectorAll('[data-only]').forEach(el => { el.hidden = el.dataset.only !== type; });
+    field('cityState').required = type === 'self';
+    // Pre-fill your own name/school for your own story; clear them again for a nomination.
+    [['teenName', 'name'], ['storySchool', 'school']].forEach(([id, key]) => {
+      const mine = currentProfile && currentProfile[key];
+      if (!mine) return;
+      if (type === 'self' && !field(id).value) field(id).value = mine;
+      if (type === 'nominee' && field(id).value === mine) field(id).value = '';
+    });
+  }
+
+  storyForm.addEventListener('change', e => {
+    if (e.target.name === 'submissionType') {
+      storyMsg.hidden = true;
+      applySubmissionType(e.target.value);
+    }
+  });
+
+  storyForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!db || !currentUser) return showStoryMessage('Please log in to submit a story.', true);
+    const type = storyForm.submissionType.value;
+    const file = field('photoFile').files[0];
+    if (file && file.size > 5 * 1024 * 1024) return showStoryMessage('That photo is larger than 5 MB. Please choose a smaller one.', true);
+
+    storyBtn.disabled = true;
+    storyBtn.textContent = file ? 'Uploading photo...' : 'Submitting...';
+    storyMsg.hidden = true;
+    try {
+      let photoPath = null;
+      if (file) {
+        const ext = (file.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 5) || 'jpg';
+        photoPath = currentUser.id + '/' + crypto.randomUUID() + '.' + ext;
+        const { error } = await db.storage.from('story-photos').upload(photoPath, file, { contentType: file.type || undefined });
+        if (error) throw error;
+        storyBtn.textContent = 'Submitting...';
+      }
+      const val = id => field(id).value.trim();
+      const { error } = await db.from('stories').insert({
+        submission_type: type,
+        teen_name: val('teenName'),
+        teen_age: parseInt(val('teenAge'), 10),
+        grade_level: val('gradeLevel') || null,
+        school: val('storySchool'),
+        city_state: type === 'self' ? val('cityState') : null,
+        body: val('storyBody'),
+        why_important: val('whyImportant'),
+        photo_path: photoPath,
+        photo_description: val('photoDescription') || null,
+        permission: field('permission').checked
+      });
+      if (error) throw error;
+      storyForm.reset();
+      setStorySteps(false);
+      showStoryMessage('✓ Thank you! Your story was submitted and will appear once our team reviews it.');
+    } catch (err) {
+      console.error(err);
+      showStoryMessage('Sorry, your story could not be submitted' + (err && err.message ? ': ' + err.message : '. Please try again.'), true);
+    }
+    storyBtn.disabled = false;
+    storyBtn.textContent = 'Submit Story →';
+  });
+
   if (db) {
     // Fires on page load (restoring a saved session), sign-in, sign-out,
     // and when returning from the email confirmation link.
     db.auth.onAuthStateChange((event, session) => {
       // Defer database calls out of the auth callback, per Supabase docs.
       setTimeout(() => {
+        setStoryAccess(session ? session.user : null);
         if (session) showAccount(session.user);
-        else showView('signup');
+        else { currentProfile = null; showView('signup'); }
       }, 0);
     });
   } else {

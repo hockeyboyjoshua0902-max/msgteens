@@ -4,8 +4,10 @@ This is my report for Msg teens.
 ## Accounts & data (Supabase)
 
 Visitors create accounts (email + password) with Supabase Auth. Each account
-gets a row in `profiles` (name, school, role, points), and signed-in users can
-submit `stories`, which appear publicly once you approve them. The schema is
+gets a row in `profiles` (name, school, role, points). Signed-in users can
+submit a story (their own, or a nomination of another teen) with the
+"Submit a Teen Story" form; it's saved to `stories`, with an optional photo in
+the private `story-photos` storage bucket. The schema is
 in `supabase/schema.sql`.
 
 The Supabase keys live in Vercel environment variables. At deploy time,
@@ -31,7 +33,13 @@ Never put `SUPABASE_SECRET_KEY` (`sb_secret_...`) or the `service_role` key in V
 be published in `config.js` and bypasses all security.
 
 ### Managing data
-- Approve a story: Table Editor → `stories` → set `status` to `approved`.
+- New stories arrive with `status` = `pending`. Read them in Table Editor →
+  `stories`, and set `status` to `approved` (or `rejected`).
+- Story photos: Storage → `story-photos`. The story's `photo_path` column is
+  the file's path in that bucket. The bucket is private, so photos are not
+  visible to the public.
+- After changing `supabase/schema.sql`, run the whole file again in the SQL
+  Editor; it's safe to re-run and upgrades existing tables.
 - Award points: Table Editor → `profiles` → edit `points`.
 
 ### Local testing
