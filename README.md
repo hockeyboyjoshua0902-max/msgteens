@@ -21,12 +21,13 @@ which the page loads.
    confirmation emails link back to the site.
 3. **Environment variables:** Vercel → your project → **Settings →
    Environment Variables**. Add both for Production, Preview and Development:
-   - `SUPABASE_URL`: Supabase → Project Settings → API → Project URL
-   - `SUPABASE_ANON_KEY`: the **anon / public** key from the same page
+   - `SUPABASE_URL`: your project URL (`https://<ref>.supabase.co`)
+   - `SUPABASE_PUBLISHABLE_KEY`: the `sb_publishable_...` key
+     (the legacy `SUPABASE_ANON_KEY` name also works)
 4. **Redeploy** (Deployments → ⋯ → Redeploy). Env var changes only apply to
    new deployments.
 
-Never put the `service_role` / secret key in Vercel for this site — it would
+Never put `SUPABASE_SECRET_KEY` (`sb_secret_...`) or the `service_role` key in Vercel for this site — it would
 be published in `config.js` and bypasses all security.
 
 ### Managing data
@@ -35,6 +36,6 @@ be published in `config.js` and bypasses all security.
 
 ### Local testing
 ```
-SUPABASE_URL=... SUPABASE_ANON_KEY=... node scripts/build-config.js
+SUPABASE_URL=... SUPABASE_PUBLISHABLE_KEY=... node scripts/build-config.js
 python3 -m http.server -d public
 ```
