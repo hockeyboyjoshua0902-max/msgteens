@@ -565,15 +565,58 @@
 </footer>
 
 <script>
+  // Supabase project settings (Dashboard -> Project Settings -> API).
+  // The anon key is meant to be public; the table's RLS policy only allows inserts.
+  const SUPABASE_URL = 'https://YOUR-PROJECT-REF.supabase.co';
+  const SUPABASE_ANON_KEY = 'YOUR-ANON-PUBLIC-KEY';
+
   document.getElementById('signupForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    const btn = this.querySelector('button');
+    const form = this;
+    const btn = form.querySelector('button');
+    const msg = document.getElementById('formMsg');
     btn.textContent = 'Saving...';
     btn.disabled = true;
+    msg.style.display = 'none';
 
-    document.getElementById('formMsg').style.display = 'block';
-    this.reset();
+    const signup = {
+      name: document.getElementById('name').value.trim(),
+      email: document.getElementById('email').value.trim().toLowerCase(),
+      school: document.getElementById('school').value.trim() || null,
+      role: document.getElementById('role').value || null
+    };
 
+    try {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/signups', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(signup)
+      });
+
+      if (res.ok) {
+        msg.textContent = "✓ You're in! Welcome to MSG Teens.";
+        msg.style.color = 'var(--blue)';
+        form.reset();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        msg.textContent = err.code === '23505'
+          ? "✓ You're already signed up with that email!"
+          : 'Something went wrong. Please try again.';
+        msg.style.color = err.code === '23505' ? 'var(--blue)' : '#d33';
+        if (err.code !== '23505') console.error('Supabase error:', err);
+      }
+    } catch (networkErr) {
+      msg.textContent = 'Could not connect. Check your internet and try again.';
+      msg.style.color = '#d33';
+      console.error(networkErr);
+    }
+
+    msg.style.display = 'block';
     btn.textContent = 'Join MSG Teens →';
     btn.disabled = false;
   });
