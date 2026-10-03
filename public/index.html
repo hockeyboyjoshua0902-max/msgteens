@@ -569,6 +569,7 @@
     <div id="accountPanel" class="account-panel" hidden>
       <p class="account-name">Welcome, <strong id="accountName"></strong>!</p>
       <p class="account-meta"><span id="accountSchool"></span><span id="accountPoints"></span></p>
+      <a href="admin.html" id="adminLink" class="col-link" style="margin-top:0;align-self:flex-start" hidden>Open admin panel →</a>
       <button type="button" id="logoutBtn">Log Out</button>
     </div>
 
@@ -720,10 +721,11 @@
 
   async function showAccount(user) {
     const { data: profile } = await db.from('profiles')
-      .select('name, school, points').eq('id', user.id).single();
+      .select('name, school, points, is_admin').eq('id', user.id).single();
     currentProfile = profile;
     document.getElementById('accountName').textContent = profile ? profile.name : user.email;
     document.getElementById('accountSchool').textContent = profile && profile.school ? profile.school : '';
+    document.getElementById('adminLink').hidden = !(profile && profile.is_admin);
     document.getElementById('accountPoints').textContent = '🏆 ' + (profile ? profile.points : 0) + ' points';
     showView('account');
   }

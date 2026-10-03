@@ -17,11 +17,21 @@ create table if not exists public.profiles (
   points      integer not null default 0
 );
 
+-- Added later (re-running upgrades older tables). email is a copy for the
+-- admin panel; is_admin marks admin accounts (set it with SQL, see README).
+alter table public.profiles
+  add column if not exists email    text,
+  add column if not exists is_admin boolean not null default false;
+
+update public.profiles p set email = u.email
+  from auth.users u where u.id = p.id and p.email is null;
+
 alter table public.profiles enable row level security;
 
 -- Supabase grants everything to browser roles by default; lock it down and
 -- grant back only what the site needs. Users may edit their name, school and
--- role but never their points (change those from the dashboard).
+-- role but never their points, email or admin status (admins change points
+-- through the admin_set_points function below).
 revoke all on public.profiles from anon, authenticated;
 grant select on public.profiles to authenticated;
 grant update (name, school, role) on public.profiles to authenticated;
@@ -48,9 +58,10 @@ as $$
 declare
   meta jsonb := coalesce(new.raw_user_meta_data, '{}'::jsonb);
 begin
-  insert into public.profiles (id, name, school, role)
+  insert into public.profiles (id, email, name, school, role)
   values (
     new.id,
+    new.email,
     left(coalesce(nullif(trim(meta ->> 'name'), ''), split_part(new.email, '@', 1)), 200),
     left(nullif(trim(meta ->> 'school'), ''), 200),
     case when meta ->> 'role' in ('teen', 'parent', 'teacher', 'community')
@@ -149,3 +160,80 @@ create policy "Users can upload story photos"
     bucket_id = 'story-photos'
     and (storage.foldername(name))[1] = (select auth.uid())::text
   );
+
+-- ─────────────────────────────────────────────
+-- ADMIN PANEL (admin.html): admins can see every member, story and photo,
+-- approve/reject stories and set points. Make someone an admin with:
+--   update public.profiles set is_admin = true where email = 'you@example.com';
+-- ─────────────────────────────────────────────
+create or replace function public.is_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select coalesce((select is_admin from public.profiles where id = (select auth.uid())), false);
+$$;
+
+revoke all on function public.is_admin() from public, anon;
+grant execute on function public.is_admin() to authenticated;
+
+drop policy if exists "Admins can view all profiles" on public.profiles;
+create policy "Admins can view all profiles"
+  on public.profiles for select to authenticated
+  using ((select public.is_admin()));
+
+drop policy if exists "Admins can view all stories" on public.stories;
+create policy "Admins can view all stories"
+  on public.stories for select to authenticated
+  using ((select public.is_admin()));
+
+drop policy if exists "Admins can view story photos" on storage.objects;
+create policy "Admins can view story photos"
+  on storage.objects for select to authenticated
+  using (bucket_id = 'story-photos' and (select public.is_admin()));
+
+-- Changes go through these functions, which check for an admin first. (Granting
+-- UPDATE on these columns instead would let users change their own points.)
+create or replace function public.admin_set_story_status(story_id bigint, new_status text)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if not public.is_admin() then
+    raise exception 'Only admins can do this' using errcode = '42501';
+  end if;
+  update public.stories set status = new_status where id = story_id;
+  if not found then
+    raise exception 'Story % not found', story_id;
+  end if;
+end;
+$$;
+
+create or replace function public.admin_set_points(member_id uuid, new_points integer)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if not public.is_admin() then
+    raise exception 'Only admins can do this' using errcode = '42501';
+  end if;
+  if new_points < 0 then
+    raise exception 'Points cannot be negative';
+  end if;
+  update public.profiles set points = new_points where id = member_id;
+  if not found then
+    raise exception 'Member % not found', member_id;
+  end if;
+end;
+$$;
+
+revoke all on function public.admin_set_story_status(bigint, text) from public, anon;
+revoke all on function public.admin_set_points(uuid, integer) from public, anon;
+grant execute on function public.admin_set_story_status(bigint, text) to authenticated;
+grant execute on function public.admin_set_points(uuid, integer) to authenticated;

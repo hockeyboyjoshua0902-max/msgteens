@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>MSG Teens Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #0099CC;
+    --blue-light: #A3CEF1;
+    --blue-pale: #EBF6FC;
+    --black: #111111;
+    --grey: #8B8C89;
+    --white: #FFFFFF;
+    --green: #1f8a4c;
+    --red: #c62828;
+    --amber: #b26a00;
+    --radius: 16px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--blue-pale); color: var(--black); min-height: 100vh; }
+  button, input, select { font-family: inherit; font-size: 14px; }
+
+  header {
+    background: var(--black); color: var(--white);
+    padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  header h1 { font-family: 'Playfair Display', serif; font-size: 22px; }
+  header h1 span { color: var(--blue-light); }
+  .header-right { display: flex; align-items: center; gap: 16px; font-size: 14px; flex-wrap: wrap; }
+  .header-right a { color: var(--blue-light); }
+  .header-right button { background: none; border: 1px solid #555; color: var(--white); border-radius: 50px; padding: 6px 16px; cursor: pointer; }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 32px 16px 64px; }
+  .card { background: var(--white); border-radius: var(--radius); padding: 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+  .center-card { max-width: 420px; margin: 48px auto; text-align: center; }
+  .center-card h2 { font-family: 'Playfair Display', serif; margin-bottom: 8px; }
+  .center-card p { color: #555; }
+
+  .login-form { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; text-align: left; }
+  input[type=email], input[type=password], input[type=number], input[type=search] {
+    padding: 11px 14px; border: 2px solid var(--blue-light); border-radius: 10px; outline: none; background: var(--white);
+  }
+  input:focus { border-color: var(--blue); }
+  .btn { border: none; border-radius: 50px; padding: 10px 22px; font-weight: 600; cursor: pointer; background: var(--blue); color: var(--white); }
+  .btn:hover { filter: brightness(0.92); }
+  .btn:disabled { opacity: 0.5; cursor: default; }
+  .btn.approve { background: var(--green); }
+  .btn.reject { background: var(--red); }
+  .btn.ghost { background: none; color: var(--black); border: 2px solid var(--blue-light); }
+  .btn.small { padding: 6px 14px; font-size: 13px; }
+  .msg { font-size: 14px; margin-top: 10px; }
+  .msg.error { color: var(--red); }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat { background: var(--white); border-radius: var(--radius); padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+  .stat .num { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 900; }
+  .stat .label { font-size: 13px; color: #555; text-transform: uppercase; letter-spacing: 0.08em; }
+  .stat.pending .num { color: var(--amber); }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { background: var(--white); border: 2px solid var(--blue-light); border-radius: 50px; padding: 8px 20px; font-weight: 600; cursor: pointer; }
+  .tab[aria-selected=true] { background: var(--black); border-color: var(--black); color: var(--white); }
+
+  .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .chip { background: none; border: 2px solid var(--blue-light); border-radius: 50px; padding: 5px 14px; cursor: pointer; font-size: 13px; font-weight: 600; }
+  .chip[aria-pressed=true] { background: var(--blue); border-color: var(--blue); color: var(--white); }
+  .toolbar input[type=search] { flex: 1; min-width: 200px; }
+
+  .story { margin-bottom: 16px; display: grid; grid-template-columns: 1fr 220px; gap: 24px; }
+  .story-head { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 6px; }
+  .story h3 { font-family: 'Playfair Display', serif; font-size: 22px; }
+  .badge { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 50px; background: var(--blue-pale); color: var(--blue); }
+  .badge.pending { background: #fff3e0; color: var(--amber); }
+  .badge.approved { background: #e6f4ea; color: var(--green); }
+  .badge.rejected { background: #fdecea; color: var(--red); }
+  .meta { font-size: 14px; color: #555; margin-bottom: 14px; }
+  .story h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--blue); margin: 14px 0 4px; }
+  .story p.text { white-space: pre-wrap; line-height: 1.6; }
+  .story-side { display: flex; flex-direction: column; gap: 10px; }
+  .story-side img { width: 100%; border-radius: 12px; display: block; background: var(--blue-pale); }
+  .story-side .caption { font-size: 13px; color: #555; }
+  .no-photo { aspect-ratio: 4/3; border-radius: 12px; background: var(--blue-pale); display: flex; align-items: center; justify-content: center; color: var(--grey); font-size: 13px; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #555; padding: 10px 12px; border-bottom: 2px solid var(--blue-light); white-space: nowrap; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--blue-pale); vertical-align: middle; }
+  td.points { white-space: nowrap; }
+  td.points input { width: 80px; padding: 6px 10px; margin-right: 6px; }
+  .empty { text-align: center; color: #555; padding: 40px 16px; }
+
+  @media (max-width: 760px) {
+    header { padding: 14px 16px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .story { grid-template-columns: 1fr; }
+    .card { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>MSG Teens <span>Admin</span></h1>
+  <div class="header-right">
+    <a href="/">← Back to site</a>
+    <span id="whoami"></span>
+    <button type="button" id="logoutBtn" hidden>Log out</button>
+  </div>
+</header>
+
+<main>
+  <div class="card center-card" id="loadingView"><p>Loading…</p></div>
+
+  <div class="card center-card" id="loginView" hidden>
+    <h2>Admin log in</h2>
+    <p>Use your MSG Teens account.</p>
+    <form class="login-form" id="loginForm">
+      <input type="email" id="loginEmail" placeholder="Email address" required autocomplete="email">
+      <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+      <button type="submit" class="btn">Log In</button>
+    </form>
+    <p class="msg error" id="loginMsg" hidden></p>
+  </div>
+
+  <div class="card center-card" id="deniedView" hidden>
+    <h2>No admin access</h2>
+    <p id="deniedText">This account isn't an admin. Ask the site owner to give you access.</p>
+  </div>
+
+  <div id="adminView" hidden>
+    <div class="stats">
+      <div class="stat"><div class="num" id="statMembers">–</div><div class="label">Members</div></div>
+      <div class="stat pending"><div class="num" id="statPending">–</div><div class="label">Pending stories</div></div>
+      <div class="stat"><div class="num" id="statApproved">–</div><div class="label">Approved</div></div>
+      <div class="stat"><div class="num" id="statRejected">–</div><div class="label">Rejected</div></div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" data-tab="stories" aria-selected="true">Stories</button>
+      <button class="tab" role="tab" data-tab="members" aria-selected="false">Members</button>
+    </div>
+
+    <section id="storiesTab">
+      <div class="toolbar" id="storyFilters">
+        <button class="chip" data-status="pending" aria-pressed="true">Pending</button>
+        <button class="chip" data-status="approved" aria-pressed="false">Approved</button>
+        <button class="chip" data-status="rejected" aria-pressed="false">Rejected</button>
+        <button class="chip" data-status="all" aria-pressed="false">All</button>
+      </div>
+      <div id="storyList"></div>
+    </section>
+
+    <section id="membersTab" hidden>
+      <div class="card">
+        <div class="toolbar">
+          <input type="search" id="memberSearch" placeholder="Search by name, email or school">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Email</th><th>School</th><th>Role</th><th>Joined</th><th>Points</th></tr></thead>
+            <tbody id="memberRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <p class="msg error" id="adminMsg" hidden></p>
+  </div>
+</main>
+
+<!-- config.js is generated at build time from Vercel environment variables (scripts/build-config.js) -->
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const cfg = window.MSG_CONFIG;
+  const db = cfg && window.supabase ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey) : null;
+  const $ = id => document.getElementById(id);
+
+  let stories = [];
+  let members = [];
+  let storyFilter = 'pending';
+
+  // Build elements with textContent only: stories are visitor-written, so never use innerHTML.
+  function el(tag, props, children) {
+    const node = document.createElement(tag);
+    Object.entries(props || {}).forEach(([k, v]) => {
+      if (k === 'text') node.textContent = v;
+      else if (k === 'class') node.className = v;
+      else if (k.startsWith('on')) node.addEventListener(k.slice(2), v);
+      else node.setAttribute(k, v);
+    });
+    (children || []).forEach(c => c && node.appendChild(c));
+    return node;
+  }
+
+  function showOnly(viewId) {
+    ['loadingView', 'loginView', 'deniedView', 'adminView'].forEach(id => { $(id).hidden = id !== viewId; });
+  }
+
+  function showError(id, text) {
+    $(id).textContent = text;
+    $(id).hidden = !text;
+  }
+
+  const formatDate = iso => new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  const roleNames = { teen: 'Teen', parent: 'Parent / Guardian', teacher: 'Teacher / Coach', community: 'Community Member' };
+
+  // ── Data ──
+  async function loadAll() {
+    showError('adminMsg', '');
+    const [storyRes, memberRes] = await Promise.all([
+      db.from('stories').select('*, submitter:profiles(name, email)').order('created_at', { ascending: false }),
+      db.from('profiles').select('id, name, email, school, role, points, is_admin, created_at').order('created_at', { ascending: false })
+    ]);
+    if (storyRes.error || memberRes.error) {
+      console.error(storyRes.error || memberRes.error);
+      return showError('adminMsg', 'Could not load data: ' + (storyRes.error || memberRes.error).message);
+    }
+    stories = storyRes.data;
+    members = memberRes.data;
+
+    // Short-lived private links for the story photos (bucket is not public).
+    const paths = stories.map(s => s.photo_path).filter(Boolean);
+    if (paths.length) {
+      const { data, error } = await db.storage.from('story-photos').createSignedUrls(paths, 3600);
+      if (error) console.error(error);
+      const urls = Object.fromEntries((data || []).filter(d => d.signedUrl).map(d => [d.path, d.signedUrl]));
+      stories.forEach(s => { s.photoUrl = urls[s.photo_path] || null; });
+    }
+    renderStats();
+    renderStories();
+    renderMembers();
+  }
+
+  function renderStats() {
+    const count = status => stories.filter(s => s.status === status).length;
+    $('statMembers').textContent = members.length;
+    $('statPending').textContent = count('pending');
+    $('statApproved').textContent = count('approved');
+    $('statRejected').textContent = count('rejected');
+  }
+
+  // ── Stories ──
+  function renderStories() {
+    const list = $('storyList');
+    list.replaceChildren();
+    const shown = stories.filter(s => storyFilter === 'all' || s.status === storyFilter);
+    if (!shown.length) {
+      list.appendChild(el('div', { class: 'card empty', text: storyFilter === 'pending' ? 'No stories waiting for review. 🎉' : 'No stories here yet.' }));
+      return;
+    }
+    shown.forEach(s => list.appendChild(storyCard(s)));
+  }
+
+  function storyCard(s) {
+    const isSelf = s.submission_type === 'self';
+    const details = [
+      s.teen_age ? 'Age ' + s.teen_age : null,
+      s.grade_level ? s.grade_level + ' grade' : null,
+      s.school,
+      s.city_state
+    ].filter(Boolean).join(' · ');
+    const submitter = s.submitter ? (s.submitter.name + (s.submitter.email ? ' (' + s.submitter.email + ')' : '')) : 'Unknown';
+
+    const actions = el('div', { class: 'actions' });
+    if (s.status !== 'approved') actions.appendChild(el('button', { class: 'btn approve small', text: 'Approve', onclick: e => setStatus(s, 'approved', e.target) }));
+    if (s.status !== 'rejected') actions.appendChild(el('button', { class: 'btn reject small', text: 'Reject', onclick: e => setStatus(s, 'rejected', e.target) }));
+    if (s.status !== 'pending') actions.appendChild(el('button', { class: 'btn ghost small', text: 'Move to pending', onclick: e => setStatus(s, 'pending', e.target) }));
+
+    const photo = s.photoUrl
+      ? el('a', { href: s.photoUrl, target: '_blank', rel: 'noopener' }, [el('img', { src: s.photoUrl, alt: s.photo_description || 'Story photo' })])
+      : el('div', { class: 'no-photo', text: s.photo_path ? 'Photo unavailable' : 'No photo' });
+
+    return el('article', { class: 'card story' }, [
+      el('div', {}, [
+        el('div', { class: 'story-head' }, [
+          el('span', { class: 'badge ' + s.status, text: s.status[0].toUpperCase() + s.status.slice(1) }),
+          el('span', { class: 'badge', text: isSelf ? 'Own story' : 'Nomination' })
+        ]),
+        el('h3', { text: s.teen_name || '(no name)' }),
+        el('p', { class: 'meta', text: details }),
+        el('h4', { text: isSelf ? 'What happened' : 'What the teen did' }),
+        el('p', { class: 'text', text: s.body || '' }),
+        el('h4', { text: 'Why it matters' }),
+        el('p', { class: 'text', text: s.why_important || '' }),
+        el('p', { class: 'meta', text: 'Submitted ' + formatDate(s.created_at) + ' by ' + submitter + (s.permission ? ' · Permission given ✓' : ' · No permission') }),
+        actions
+      ]),
+      el('div', { class: 'story-side' }, [
+        photo,
+        s.photo_description ? el('p', { class: 'caption', text: s.photo_description }) : null
+      ])
+    ]);
+  }
+
+  async function setStatus(story, status, button) {
+    button.disabled = true;
+    const { error } = await db.rpc('admin_set_story_status', { story_id: story.id, new_status: status });
+    if (error) {
+      button.disabled = false;
+      return showError('adminMsg', 'Could not update story: ' + error.message);
+    }
+    story.status = status;
+    renderStats();
+    renderStories();
+  }
+
+  // ── Members ──
+  function renderMembers() {
+    const q = $('memberSearch').value.trim().toLowerCase();
+    const rows = $('memberRows');
+    rows.replaceChildren();
+    const shown = members.filter(m => !q || [m.name, m.email, m.school].some(v => v && v.toLowerCase().includes(q)));
+    if (!shown.length) {
+      rows.appendChild(el('tr', {}, [el('td', { class: 'empty', colspan: '6', text: q ? 'No members match your search.' : 'No members yet.' })]));
+      return;
+    }
+    shown.forEach(m => {
+      const input = el('input', { type: 'number', min: '0', step: '1', value: String(m.points), 'aria-label': 'Points for ' + m.name });
+      const save = el('button', { class: 'btn small', text: 'Save' });
+      save.addEventListener('click', () => savePoints(m, input, save));
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') savePoints(m, input, save); });
+      rows.appendChild(el('tr', {}, [
+        el('td', {}, [document.createTextNode(m.name), m.is_admin ? el('span', { class: 'badge', text: 'Admin', style: 'margin-left:6px' }) : null]),
+        el('td', { text: m.email || '' }),
+        el('td', { text: m.school || '' }),
+        el('td', { text: roleNames[m.role] || '' }),
+        el('td', { text: formatDate(m.created_at) }),
+        el('td', { class: 'points' }, [input, save])
+      ]));
+    });
+  }
+
+  async function savePoints(member, input, button) {
+    const points = Number(input.value);
+    if (!Number.isInteger(points) || points < 0) return showError('adminMsg', 'Points must be a whole number, 0 or more.');
+    button.disabled = true;
+    button.textContent = 'Saving…';
+    const { error } = await db.rpc('admin_set_points', { member_id: member.id, new_points: points });
+    button.disabled = false;
+    if (error) {
+      button.textContent = 'Save';
+      return showError('adminMsg', 'Could not save points: ' + error.message);
+    }
+    showError('adminMsg', '');
+    member.points = points;
+    button.textContent = 'Saved ✓';
+    setTimeout(() => { button.textContent = 'Save'; }, 1500);
+  }
+
+  // ── Wiring ──
+  document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t === tab)));
+    $('storiesTab').hidden = tab.dataset.tab !== 'stories';
+    $('membersTab').hidden = tab.dataset.tab !== 'members';
+  }));
+
+  document.querySelectorAll('#storyFilters .chip').forEach(chip => chip.addEventListener('click', () => {
+    storyFilter = chip.dataset.status;
+    document.querySelectorAll('#storyFilters .chip').forEach(c => c.setAttribute('aria-pressed', String(c === chip)));
+    renderStories();
+  }));
+
+  $('memberSearch').addEventListener('input', renderMembers);
+
+  $('loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.disabled = true;
+    showError('loginMsg', '');
+    const { error } = await db.auth.signInWithPassword({ email: $('loginEmail').value.trim(), password: $('loginPassword').value });
+    btn.disabled = false;
+    if (error) showError('loginMsg', error.message);
+  });
+
+  $('logoutBtn').addEventListener('click', () => db.auth.signOut());
+
+  async function onSession(session) {
+    $('logoutBtn').hidden = !session;
+    $('whoami').textContent = session ? session.user.email : '';
+    if (!session) return showOnly('loginView');
+    showOnly('loadingView');
+    const { data: isAdmin, error } = await db.rpc('is_admin');
+    if (error) {
+      console.error(error);
+      $('deniedText').textContent = 'Could not check admin access: ' + error.message;
+      return showOnly('deniedView');
+    }
+    if (!isAdmin) {
+      $('deniedText').textContent = "This account isn't an admin. Ask the site owner to give you access.";
+      return showOnly('deniedView');
+    }
+    showOnly('adminView');
+    loadAll();
+  }
+
+  if (db) {
+    db.auth.onAuthStateChange((event, session) => {
+      if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') return;
+      setTimeout(() => onSession(session), 0);
+    });
+  } else {
+    $('deniedText').textContent = cfg ? 'The Supabase library failed to load. Check your connection and refresh.'
+      : 'Supabase is not configured for this deployment (set SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY in Vercel).';
+    showOnly('deniedView');
+  }
+</script>
+</body>
+</html>
