@@ -32,7 +32,23 @@ which the page loads.
 Never put `SUPABASE_SECRET_KEY` (`sb_secret_...`) or the `service_role` key in Vercel for this site — it would
 be published in `config.js` and bypasses all security.
 
-### Managing data
+### Admin panel
+Go to `/admin.html` (e.g. `https://www.msgteens.com/admin.html`), or use the
+"Open admin panel" link in your account box on the home page. Admins can
+review stories (with photos) and approve or reject them, see every member,
+and set points.
+
+To make an account an admin, sign up on the site first, then run this in the
+Supabase SQL Editor with that account's email:
+
+```sql
+update public.profiles set is_admin = true where email = 'you@example.com';
+```
+
+(Use `is_admin = false` to remove access.) Non-admins who open the page see
+"No admin access", and the database refuses their admin actions as well.
+
+### Managing data in the Supabase dashboard
 - New stories arrive with `status` = `pending`. Read them in Table Editor →
   `stories`, and set `status` to `approved` (or `rejected`).
 - Story photos: Storage → `story-photos`. The story's `photo_path` column is
