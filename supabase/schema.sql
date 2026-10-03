@@ -119,17 +119,17 @@ alter table public.stories enable row level security;
 
 -- Users submit the story fields only; user_id and status are filled in by
 -- the defaults, so nobody can post as someone else or self-approve.
--- Approve stories by changing status in the dashboard (Table Editor).
+-- Approve stories in the admin panel (admin.html).
+-- The public never reads this table directly; the home page uses
+-- get_approved_stories() below, which leaves out private details.
 revoke all on public.stories from anon, authenticated;
-grant select on public.stories to anon, authenticated;
+grant select on public.stories to authenticated;
 grant insert (submission_type, teen_name, teen_age, grade_level, school, city_state,
               body, why_important, photo_path, photo_description, permission)
   on public.stories to authenticated;
 
+-- Replaced by get_approved_stories(); dropped so re-running removes it.
 drop policy if exists "Anyone can read approved stories" on public.stories;
-create policy "Anyone can read approved stories"
-  on public.stories for select to anon, authenticated
-  using (status = 'approved');
 
 drop policy if exists "Users can read their own stories" on public.stories;
 create policy "Users can read their own stories"
@@ -237,3 +237,49 @@ revoke all on function public.admin_set_story_status(bigint, text) from public, 
 revoke all on function public.admin_set_points(uuid, integer) from public, anon;
 grant execute on function public.admin_set_story_status(bigint, text) to authenticated;
 grant execute on function public.admin_set_points(uuid, integer) to authenticated;
+
+-- ─────────────────────────────────────────────
+-- PUBLIC STORIES (home page "Teen Stories" section)
+-- Only approved stories, and only what's safe to show publicly: no age,
+-- submitter, or account details.
+-- ─────────────────────────────────────────────
+create or replace function public.get_approved_stories()
+returns table (
+  id bigint, created_at timestamptz, submission_type text, teen_name text,
+  grade_level text, school text, city_state text, body text,
+  why_important text, photo_path text, photo_description text
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select id, created_at, submission_type, teen_name, grade_level, school, city_state,
+         body, why_important, photo_path, photo_description
+  from public.stories
+  where status = 'approved'
+  order by created_at desc;
+$$;
+
+revoke all on function public.get_approved_stories() from public;
+grant execute on function public.get_approved_stories() to anon, authenticated;
+
+-- A photo becomes viewable by everyone once its story is approved (and private
+-- again if the story is moved back to pending or rejected).
+create or replace function public.is_approved_story_photo(path text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (select 1 from public.stories where photo_path = path and status = 'approved');
+$$;
+
+revoke all on function public.is_approved_story_photo(text) from public;
+grant execute on function public.is_approved_story_photo(text) to anon, authenticated;
+
+drop policy if exists "Anyone can view approved story photos" on storage.objects;
+create policy "Anyone can view approved story photos"
+  on storage.objects for select to anon, authenticated
+  using (bucket_id = 'story-photos' and public.is_approved_story_photo(name));
