@@ -74,6 +74,7 @@
   .story-head { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 6px; }
   .story h3 { font-family: 'Playfair Display', serif; font-size: 22px; }
   .badge { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 50px; background: var(--blue-pale); color: var(--blue); }
+  a.badge { text-decoration: none; }
   .badge.pending { background: #fff3e0; color: var(--amber); }
   .badge.approved { background: #e6f4ea; color: var(--green); }
   .badge.rejected { background: #fdecea; color: var(--red); }
@@ -279,7 +280,8 @@
       el('div', {}, [
         el('div', { class: 'story-head' }, [
           el('span', { class: 'badge ' + s.status, text: s.status[0].toUpperCase() + s.status.slice(1) }),
-          el('span', { class: 'badge', text: isSelf ? 'Own story' : 'Nomination' })
+          el('span', { class: 'badge', text: isSelf ? 'Own story' : 'Nomination' }),
+          s.status === 'approved' ? el('a', { class: 'badge approved', href: '/#teen-stories', target: '_blank', rel: 'noopener', text: 'Live on home page ↗' }) : null
         ]),
         el('h3', { text: s.teen_name || '(no name)' }),
         el('p', { class: 'meta', text: details }),

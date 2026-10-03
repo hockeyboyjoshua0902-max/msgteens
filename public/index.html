@@ -263,6 +263,32 @@
     font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
   }
 
+  /* ── APPROVED TEEN STORIES ── */
+  section[id] { scroll-margin-top: 76px; } /* keep headings clear of the sticky nav */
+  .teen-stories { padding: 64px 48px; border-top: 3px solid var(--blue-light); }
+  .teen-stories[hidden] { display: none; }
+  .ts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start; }
+  .ts-card {
+    background: var(--white); border: 2px solid var(--blue-light); border-radius: var(--radius);
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .ts-photo { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: var(--blue-pale); }
+  .ts-body { padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 8px; }
+  .ts-tag { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); }
+  .ts-name { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; line-height: 1.2; }
+  .ts-meta { font-size: 13px; color: var(--grey); }
+  .ts-label { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--black); margin-top: 6px; }
+  .ts-text { font-size: 15px; line-height: 1.6; color: #333; white-space: pre-wrap; }
+  .ts-card:not(.open) .ts-text { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+  .ts-caption { font-size: 13px; color: var(--grey); font-style: italic; }
+  .ts-more {
+    align-self: flex-start; margin-top: 4px; background: none; border: none; padding: 0;
+    color: var(--blue); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
+    border-bottom: 2px solid var(--blue-light);
+  }
+  .ts-empty { text-align: center; color: #555; font-size: 16px; }
+  .ts-empty a { color: var(--blue); font-weight: 600; }
+
   /* ── IMAGES GRID ── */
   .images-section {
     padding: 64px 48px;
@@ -383,6 +409,10 @@
   .hero-center .hero-sub { animation-delay: 0.25s; }
   .hero-center .hero-btns { animation-delay: 0.35s; }
 
+  @media (max-width: 1100px) and (min-width: 901px) {
+    .ts-grid { grid-template-columns: 1fr 1fr; }
+  }
+
   @media (max-width: 900px) {
     nav { padding: 0 24px; }
     .hero { grid-template-columns: 1fr; }
@@ -392,6 +422,8 @@
     .img-grid { grid-template-columns: 1fr 1fr; }
     .submit-banner { flex-direction: column; text-align: center; }
     .story-section { padding: 48px 16px; }
+    .teen-stories { padding: 48px 16px; }
+    .ts-grid { grid-template-columns: 1fr; }
     .story-card { padding: 28px 20px; }
     .story-form .row { grid-template-columns: 1fr; }
     footer { flex-direction: column; text-align: center; }
@@ -420,7 +452,7 @@
   </a>
   <ul class="nav-links">
     <li><a href="#">Home</a></li>
-    <li><a href="#">Wall of Fame</a></li>
+    <li><a href="#teen-stories">Wall of Fame</a></li>
     <li><a href="#">Blog</a></li>
     <li><a href="#">About</a></li>
     <li><a href="#signup" class="nav-cta">Join Now</a></li>
@@ -450,7 +482,7 @@
     <h1 class="hero-headline">Misunderstood.<br><em>Just like MSG.</em></h1>
     <p class="hero-sub">Teens are changing the world, one story at a time. We showcase the real side of teenagers that adults rarely see.</p>
     <div class="hero-btns">
-      <a href="#stories" class="btn-primary">Read Their Stories</a>
+      <a href="#teen-stories" class="btn-primary">Read Their Stories</a>
       <a href="#story" class="btn-secondary">Submit a Story</a>
     </div>
   </div>
@@ -577,6 +609,16 @@
   </div>
 </section>
 
+<!-- APPROVED TEEN STORIES (loaded from Supabase: get_approved_stories) -->
+<section class="teen-stories" id="teen-stories" hidden>
+  <div class="section-header">
+    <h2>Teen Stories</h2>
+    <p>Real stories from our community, shared with permission.</p>
+  </div>
+  <div class="ts-grid" id="tsGrid"></div>
+  <p class="ts-empty" id="tsEmpty" hidden>No stories yet. <a href="#story">Be the first to share one →</a></p>
+</section>
+
 <!-- TEEN IMAGES GALLERY (using Joshua's 6 uploaded photos) -->
 <section class="images-section" id="gallery">
   <div class="section-header">
@@ -682,7 +724,7 @@
   </div>
   <div style="display:flex;gap:24px;flex-wrap:wrap">
     <a href="#">Home</a>
-    <a href="#">Wall of Fame</a>
+    <a href="#teen-stories">Wall of Fame</a>
     <a href="#">Blog</a>
     <a href="#story">Submit a Story</a>
     <a href="#">About</a>
@@ -882,9 +924,72 @@
     storyBtn.textContent = 'Submit Story →';
   });
 
+  // ── Approved stories (public) ──
+  async function loadApprovedStories() {
+    const section = document.getElementById('teen-stories');
+    const grid = document.getElementById('tsGrid');
+    const { data: stories, error } = await db.rpc('get_approved_stories');
+    if (error) { console.error('Could not load stories:', error); return; }
+
+    // Approved photos are readable by everyone; signed links keep the bucket itself private.
+    const paths = stories.map(s => s.photo_path).filter(Boolean);
+    const urls = {};
+    if (paths.length) {
+      const { data, error: urlError } = await db.storage.from('story-photos').createSignedUrls(paths, 60 * 60 * 24);
+      if (urlError) console.error(urlError);
+      (data || []).forEach(d => { if (d.signedUrl) urls[d.path] = d.signedUrl; });
+    }
+
+    // Stories are visitor-written, so build everything with textContent (never innerHTML).
+    const make = (tag, cls, text) => {
+      const node = document.createElement(tag);
+      if (cls) node.className = cls;
+      if (text) node.textContent = text;
+      return node;
+    };
+    grid.replaceChildren(...stories.map(s => {
+      const card = make('article', 'ts-card');
+      if (urls[s.photo_path]) {
+        const img = make('img', 'ts-photo');
+        img.src = urls[s.photo_path];
+        img.alt = s.photo_description || 'Photo of ' + s.teen_name;
+        img.loading = 'lazy';
+        img.onerror = () => img.remove();
+        card.appendChild(img);
+      }
+      const body = make('div', 'ts-body');
+      body.append(
+        make('p', 'ts-tag', s.submission_type === 'self' ? 'In their own words' : 'Nominated'),
+        make('h3', 'ts-name', s.teen_name),
+        make('p', 'ts-meta', [s.grade_level && s.grade_level !== 'Other' ? s.grade_level + ' grade' : null, s.school, s.city_state].filter(Boolean).join(' · ')),
+        make('p', 'ts-label', s.submission_type === 'self' ? 'What happened' : 'What they did'),
+        make('p', 'ts-text', s.body),
+        make('p', 'ts-label', 'Why it matters'),
+        make('p', 'ts-text', s.why_important)
+      );
+      if (s.photo_description && urls[s.photo_path]) body.appendChild(make('p', 'ts-caption', s.photo_description));
+      const more = make('button', 'ts-more', 'Read more');
+      more.type = 'button';
+      more.addEventListener('click', () => {
+        more.textContent = card.classList.toggle('open') ? 'Show less' : 'Read more';
+      });
+      body.appendChild(more);
+      card.appendChild(body);
+      return card;
+    }));
+    document.getElementById('tsEmpty').hidden = stories.length > 0;
+    section.hidden = false;
+    // Only offer "Read more" where text is actually cut off.
+    grid.querySelectorAll('.ts-card').forEach(card => {
+      const clipped = [...card.querySelectorAll('.ts-text')].some(t => t.scrollHeight > t.clientHeight + 1);
+      card.querySelector('.ts-more').hidden = !clipped;
+    });
+  }
+
   if (db) {
     // Fires on page load (restoring a saved session), sign-in, sign-out,
     // and when returning from the email confirmation link.
+    loadApprovedStories();
     db.auth.onAuthStateChange((event, session) => {
       // Defer database calls out of the auth callback, per Supabase docs.
       setTimeout(() => {

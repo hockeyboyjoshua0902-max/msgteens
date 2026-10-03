@@ -49,11 +49,17 @@ update public.profiles set is_admin = true where email = 'you@example.com';
 "No admin access", and the database refuses their admin actions as well.
 
 ### Managing data in the Supabase dashboard
+- Approved stories appear in the "Teen Stories" section of the home page
+  (`#teen-stories`, also linked from "Read Their Stories" and "Wall of
+  Fame") the next time the page loads, with their photo. The public sees the
+  name, grade, school, city/state, story and photo description, but never
+  the teen's age or who submitted it. Moving a story back to pending or
+  rejected removes it and makes its photo private again.
 - New stories arrive with `status` = `pending`. Read them in Table Editor →
   `stories`, and set `status` to `approved` (or `rejected`).
 - Story photos: Storage → `story-photos`. The story's `photo_path` column is
-  the file's path in that bucket. The bucket is private, so photos are not
-  visible to the public.
+  the file's path in that bucket. Only photos of approved stories are visible
+  to the public.
 - After changing `supabase/schema.sql`, run the whole file again in the SQL
   Editor; it's safe to re-run and upgrades existing tables.
 - Award points: Table Editor → `profiles` → edit `points`.
