@@ -32,7 +32,7 @@
     if (url.pathname === location.pathname && url.search === location.search) return;
     e.preventDefault();
     document.body.classList.add('is-leaving');
-    setTimeout(() => { location.href = url.href; }, 160);
+    setTimeout(() => { location.href = url.href; }, 240);
   });
   // Coming back with the browser's Back button can restore the faded-out page; undo that.
   window.addEventListener('pageshow', e => { if (e.persisted) document.body.classList.remove('is-leaving'); });
@@ -75,9 +75,15 @@
   // ── Approved stories ──
   // Fills `grid` with story cards. Shows `section` once loaded; `empty` when there are none.
   async function loadStories({ grid, section, empty, limit }) {
-    if (!db) return;
+    // On failure, clear the loading placeholders and say so (where the page has a message).
+    const fail = () => {
+      grid.replaceChildren();
+      grid.removeAttribute('aria-busy');
+      if (empty) { empty.textContent = "Stories couldn't load right now. Please try again later."; empty.hidden = false; }
+    };
+    if (!db) return fail();
     const { data, error } = await db.rpc('get_approved_stories');
-    if (error) { console.error('Could not load stories:', error); return; }
+    if (error) { console.error('Could not load stories:', error); return fail(); }
     const stories = limit ? data.slice(0, limit) : data;
 
     // Approved photos are readable by everyone; signed links keep the bucket itself private.
@@ -89,8 +95,9 @@
       (signed || []).forEach(d => { if (d.signedUrl) urls[d.path] = d.signedUrl; });
     }
 
-    grid.replaceChildren(...stories.map(s => {
-      const card = make('article', 'ts-card');
+    grid.replaceChildren(...stories.map((s, i) => {
+      const card = make('article', 'ts-card is-new');
+      card.style.animationDelay = Math.min(i, 5) * 70 + 'ms';
       if (urls[s.photo_path]) {
         const img = make('img', 'ts-photo');
         img.src = urls[s.photo_path];
@@ -120,6 +127,7 @@
       return card;
     }));
 
+    grid.removeAttribute('aria-busy');
     if (empty) empty.hidden = stories.length > 0;
     if (section) section.hidden = !empty && stories.length === 0;
     // Only offer "Read more" where text is actually cut off.
