@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MSG Teens — Misunderstood. Just like MSG.</title>
-<meta name="description" content="MSG Teens shares real stories of teenagers making a difference.">
+<title>About — MSG Teens</title>
+<meta name="description" content="Why MSG Teens exists, and the people behind it.">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -34,73 +34,58 @@
     </a>
     <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
     <ul class="nav-links" id="navLinks">
-      <li><a href="index.html" aria-current="page">Home</a></li>
+      <li><a href="index.html">Home</a></li>
       <li><a href="stories.html">Wall of Fame</a></li>
       <li><a href="submit.html">Submit a Story</a></li>
-      <li><a href="about.html">About</a></li>
+      <li><a href="about.html" aria-current="page">About</a></li>
       <li><a href="join.html" class="nav-cta">Join Now</a></li>
     </ul>
   </div>
 </nav>
 
 <main>
-<section class="hero">
+<header class="page-hero">
   <div class="container">
-    <p class="eyebrow">The truth about teenagers</p>
-    <h1>Misunderstood.<br><em>Just like MSG.</em></h1>
-    <p class="hero-sub">Teens are changing the world, one story at a time. We showcase the real side of teenagers that adults rarely see.</p>
-    <div class="hero-btns">
-      <a href="stories.html" class="btn-primary">Read Their Stories</a>
-      <a href="submit.html" class="btn-secondary">Submit a Story</a>
-    </div>
+    <p class="eyebrow">About Us</p>
+    <h1>Why we built this</h1>
+    <p>MSG Teens is a platform founded by an 8th grader in Pittsburgh who believes teenagers deserve better.</p>
   </div>
-</section>
+</header>
 
 <section class="section">
-  <div class="container">
-    <div class="section-header">
-      <h2>How MSG Teens works</h2>
-      <p>Like the food additive MSG — unfairly labeled for decades — teens are misunderstood. We're here to change that.</p>
-    </div>
-    <div class="card-grid">
-      <a class="feature-card" href="stories.html">
-        <span class="feature-num">01</span>
-        <h3>Read real stories</h3>
-        <p>Teens who led food drives, tutored classmates, cleaned up parks and stood up for others.</p>
-        <span class="text-link">Visit the Wall of Fame →</span>
-      </a>
-      <a class="feature-card" href="submit.html">
-        <span class="feature-num">02</span>
-        <h3>Share a story</h3>
-        <p>Tell us your own story, or nominate a teen whose good work deserves to be seen.</p>
-        <span class="text-link">Submit a story →</span>
-      </a>
-      <a class="feature-card" href="join.html">
-        <span class="feature-num">03</span>
-        <h3>Join the community</h3>
-        <p>Create a free account to earn points, get featured and climb the leaderboard.</p>
-        <span class="text-link">Join now →</span>
-      </a>
-    </div>
+  <div class="container narrow prose">
+    <p class="lead">In 6th grade, Joshua Wright was constantly forgetting things and responding slowly. Adults assumed he was being disrespectful — but he was just overwhelmed. That moment stuck with him.</p>
+    <p>Just like MSG, the food additive that was blamed for health problems for decades before science cleared its name, teenagers carry an unfair label. Most people assume the worst.</p>
+    <p>MSG Teens exists to prove them wrong — one real story at a time. We collect and share stories of teens who are making a difference, so adults can see the side of teenagers they rarely get to see.</p>
   </div>
 </section>
 
-<!-- Newest approved stories (hidden until there's at least one) -->
-<section class="section alt" id="latest" hidden>
+<section class="section alt">
   <div class="container">
     <div class="section-header">
-      <h2>Latest stories</h2>
-      <p>The newest additions to our Wall of Fame.</p>
+      <h2>Meet the founders</h2>
     </div>
-    <div class="ts-grid" id="tsGrid"></div>
-    <div class="section-footer"><a href="stories.html" class="btn-secondary">See all stories →</a></div>
+    <div class="founders">
+      <div class="founder-card">
+        <div class="founder-avatar" aria-hidden="true">JW</div>
+        <h3>Joshua Wright</h3>
+        <p class="founder-role">Founder</p>
+        <p class="founder-meta">Central Catholic · Pittsburgh, PA</p>
+      </div>
+      <div class="founder-card">
+        <div class="founder-avatar" aria-hidden="true">AW</div>
+        <h3>Annabelle Wright</h3>
+        <p class="founder-role">Co-founder</p>
+        <p class="founder-meta">Pittsburgh, PA</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <section class="cta-banner">
   <div class="container">
-    <h2>Know a teen doing something <em>incredible?</em><br>Their story belongs here.</h2>
-    <a href="submit.html" class="btn-white">Submit a Story →</a>
+    <h2>Help us show the world <em>who teens really are.</em></h2>
+    <a href="join.html" class="btn-white">Join MSG Teens →</a>
   </div>
 </section>
 </main>
@@ -130,13 +115,5 @@
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="app.js"></script>
-<script>
-// Old one-page links (e.g. msgteens.com/#story) now live on their own pages.
-  const moved = { '#story': 'submit.html', '#submit': 'submit.html', '#signup': 'join.html',
-                  '#teen-stories': 'stories.html', '#stories': 'stories.html', '#gallery': 'stories.html#gallery' };
-  if (moved[location.hash]) location.replace(moved[location.hash]);
-
-  MSG.loadStories({ grid: document.getElementById('tsGrid'), section: document.getElementById('latest'), limit: 3 });
-</script>
 </body>
 </html>

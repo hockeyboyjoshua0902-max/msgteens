@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MSG Teens — Misunderstood. Just like MSG.</title>
-<meta name="description" content="MSG Teens shares real stories of teenagers making a difference.">
+<title>Wall of Fame — MSG Teens</title>
+<meta name="description" content="Real stories of teens making a difference, shared with permission.">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -34,8 +34,8 @@
     </a>
     <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
     <ul class="nav-links" id="navLinks">
-      <li><a href="index.html" aria-current="page">Home</a></li>
-      <li><a href="stories.html">Wall of Fame</a></li>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="stories.html" aria-current="page">Wall of Fame</a></li>
       <li><a href="submit.html">Submit a Story</a></li>
       <li><a href="about.html">About</a></li>
       <li><a href="join.html" class="nav-cta">Join Now</a></li>
@@ -44,62 +44,77 @@
 </nav>
 
 <main>
-<section class="hero">
+<header class="page-hero">
   <div class="container">
-    <p class="eyebrow">The truth about teenagers</p>
-    <h1>Misunderstood.<br><em>Just like MSG.</em></h1>
-    <p class="hero-sub">Teens are changing the world, one story at a time. We showcase the real side of teenagers that adults rarely see.</p>
-    <div class="hero-btns">
-      <a href="stories.html" class="btn-primary">Read Their Stories</a>
-      <a href="submit.html" class="btn-secondary">Submit a Story</a>
-    </div>
+    <p class="eyebrow">Wall of Fame</p>
+    <h1>Teen Stories</h1>
+    <p>Real stories from our community, shared with permission.</p>
   </div>
-</section>
+</header>
 
-<section class="section">
+<section class="section" id="teen-stories">
   <div class="container">
-    <div class="section-header">
-      <h2>How MSG Teens works</h2>
-      <p>Like the food additive MSG — unfairly labeled for decades — teens are misunderstood. We're here to change that.</p>
-    </div>
-    <div class="card-grid">
-      <a class="feature-card" href="stories.html">
-        <span class="feature-num">01</span>
-        <h3>Read real stories</h3>
-        <p>Teens who led food drives, tutored classmates, cleaned up parks and stood up for others.</p>
-        <span class="text-link">Visit the Wall of Fame →</span>
-      </a>
-      <a class="feature-card" href="submit.html">
-        <span class="feature-num">02</span>
-        <h3>Share a story</h3>
-        <p>Tell us your own story, or nominate a teen whose good work deserves to be seen.</p>
-        <span class="text-link">Submit a story →</span>
-      </a>
-      <a class="feature-card" href="join.html">
-        <span class="feature-num">03</span>
-        <h3>Join the community</h3>
-        <p>Create a free account to earn points, get featured and climb the leaderboard.</p>
-        <span class="text-link">Join now →</span>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- Newest approved stories (hidden until there's at least one) -->
-<section class="section alt" id="latest" hidden>
-  <div class="container">
-    <div class="section-header">
-      <h2>Latest stories</h2>
-      <p>The newest additions to our Wall of Fame.</p>
-    </div>
     <div class="ts-grid" id="tsGrid"></div>
-    <div class="section-footer"><a href="stories.html" class="btn-secondary">See all stories →</a></div>
+    <p class="ts-empty" id="tsEmpty" hidden>No stories yet. <a href="submit.html">Be the first to share one →</a></p>
+  </div>
+</section>
+
+<section class="section alt" id="featured">
+  <div class="container featured">
+    <div class="featured-media">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Gitanjali_Rao_TIME_Kid_of_the_Year.jpg/440px-Gitanjali_Rao_TIME_Kid_of_the_Year.jpg"
+        alt="Gitanjali Rao, TIME Kid of the Year"
+        class="featured-img"
+        onerror="this.style.visibility='hidden'"
+      >
+    </div>
+    <div>
+      <p class="eyebrow">Featured Article</p>
+      <h2>Gitanjali Rao: The Teen Who Detected Lead in Water</h2>
+      <p>At 11 years old, she invented Tethys — a device to detect lead in drinking water — after learning about the Flint Water Crisis. She then built Kindly, an AI app to detect cyberbullying. TIME named her their first-ever Kid of the Year. Today she studies at MIT.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="gallery">
+  <div class="container">
+    <div class="section-header">
+      <h2>Teens in Action</h2>
+      <p>Real teens doing real good. Every photo tells a story adults need to see.</p>
+    </div>
+    <div class="img-grid">
+      <div class="img-tile">
+        <img src="teen1.jpg" alt="Teen volunteers collecting trash" onerror="this.parentElement.style.background='#A3CEF1';this.style.visibility='hidden'">
+        <div class="img-tile-label">Community Cleanup</div>
+      </div>
+      <div class="img-tile">
+        <img src="teen2.jpg" alt="Teens doing park work" onerror="this.parentElement.style.background='#0099CC';this.style.visibility='hidden'">
+        <div class="img-tile-label">Park Restoration</div>
+      </div>
+      <div class="img-tile">
+        <img src="teen3.jpg" alt="Teens gardening" onerror="this.parentElement.style.background='#A3CEF1';this.style.visibility='hidden'">
+        <div class="img-tile-label">Urban Gardening</div>
+      </div>
+      <div class="img-tile">
+        <img src="teen4.jpg" alt="Teens serving food" onerror="this.parentElement.style.background='#0099CC';this.style.visibility='hidden'">
+        <div class="img-tile-label">Food Service Volunteer</div>
+      </div>
+      <div class="img-tile">
+        <img src="teen5.jpg" alt="Teens at food drive" onerror="this.parentElement.style.background='#A3CEF1';this.style.visibility='hidden'">
+        <div class="img-tile-label">Local Food Drive</div>
+      </div>
+      <div class="img-tile">
+        <img src="teen6.jpg" alt="Teen painting mural" onerror="this.parentElement.style.background='#0099CC';this.style.visibility='hidden'">
+        <div class="img-tile-label">Community Mural</div>
+      </div>
+    </div>
   </div>
 </section>
 
 <section class="cta-banner">
   <div class="container">
-    <h2>Know a teen doing something <em>incredible?</em><br>Their story belongs here.</h2>
+    <h2>Know a teen who belongs <em>on this wall?</em></h2>
     <a href="submit.html" class="btn-white">Submit a Story →</a>
   </div>
 </section>
@@ -131,12 +146,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="app.js"></script>
 <script>
-// Old one-page links (e.g. msgteens.com/#story) now live on their own pages.
-  const moved = { '#story': 'submit.html', '#submit': 'submit.html', '#signup': 'join.html',
-                  '#teen-stories': 'stories.html', '#stories': 'stories.html', '#gallery': 'stories.html#gallery' };
-  if (moved[location.hash]) location.replace(moved[location.hash]);
-
-  MSG.loadStories({ grid: document.getElementById('tsGrid'), section: document.getElementById('latest'), limit: 3 });
+MSG.loadStories({ grid: document.getElementById('tsGrid'), empty: document.getElementById('tsEmpty') });
 </script>
 </body>
 </html>

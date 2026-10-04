@@ -1,6 +1,23 @@
 # msgteens
 This is my report for Msg teens.
 
+## Pages
+All pages live in `public/` and share `styles.css` (look) and `app.js`
+(Supabase connection, phone menu, login state, story cards):
+
+| Page | File |
+|---|---|
+| Home | `index.html` |
+| Wall of Fame (approved stories, featured article, gallery) | `stories.html` |
+| Submit a Story | `submit.html` |
+| About (our story, founders) | `about.html` |
+| Join (sign up / log in / my account, leaderboard) | `join.html` |
+| Admin panel | `admin.html` |
+
+The menu and footer are repeated in each page, so change them in all five
+public pages. Old one-page links like `msgteens.com/#story` redirect to the
+matching page.
+
 ## Accounts & data (Supabase)
 
 Visitors create accounts (email + password) with Supabase Auth. Each account
@@ -34,7 +51,7 @@ be published in `config.js` and bypasses all security.
 
 ### Admin panel
 Go to `/admin.html` (e.g. `https://www.msgteens.com/admin.html`), or use the
-"Open admin panel" link in your account box on the home page. Admins can
+"Admin panel" button on your account page (`join.html`). Admins can
 review stories (with photos) and approve or reject them, see every member,
 and set points.
 
@@ -49,9 +66,8 @@ update public.profiles set is_admin = true where email = 'you@example.com';
 "No admin access", and the database refuses their admin actions as well.
 
 ### Managing data in the Supabase dashboard
-- Approved stories appear in the "Teen Stories" section of the home page
-  (`#teen-stories`, also linked from "Read Their Stories" and "Wall of
-  Fame") the next time the page loads, with their photo. The public sees the
+- Approved stories appear on the Wall of Fame (`stories.html`), and the
+  newest three on the home page, the next time the page loads, with their photo. The public sees the
   name, grade, school, city/state, story and photo description, but never
   the teen's age or who submitted it. Moving a story back to pending or
   rejected removes it and makes its photo private again.
