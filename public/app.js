@@ -18,12 +18,38 @@
     });
   }
 
+  // ── Smooth page changes ──
+  // Fade the current page out before going to another page on this site
+  // (styles.css fades the next page in). Leaves new-tab clicks, downloads,
+  // other sites and same-page links alone.
+  const reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a || reduceMotion || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if ((a.target && a.target !== '_self') || a.hasAttribute('download')) return;
+    const url = new URL(a.href, location.href);
+    if (url.origin !== location.origin) return;
+    if (url.pathname === location.pathname && url.search === location.search) return;
+    e.preventDefault();
+    document.body.classList.add('is-leaving');
+    setTimeout(() => { location.href = url.href; }, 160);
+  });
+  // Coming back with the browser's Back button can restore the faded-out page; undo that.
+  window.addEventListener('pageshow', e => { if (e.persisted) document.body.classList.remove('is-leaving'); });
+
   // ── Login state, shared with the page scripts ──
   // MSG.onAuth(fn) calls fn(session) now (if known) and whenever someone logs in or out.
   const listeners = [];
   let known = false;
   let current = null;
   const cta = document.querySelector('.nav-cta');
+  // Show "My Account" straight away if a saved login exists, so the menu button
+  // doesn't flip from "Join Now" a moment after each page loads.
+  try {
+    if (cta && Object.keys(localStorage).some(k => k.startsWith('sb-') && k.endsWith('-auth-token'))) {
+      cta.textContent = 'My Account';
+    }
+  } catch (e) { /* storage unavailable: wait for the real login check */ }
 
   if (db) {
     db.auth.onAuthStateChange((event, session) => {
