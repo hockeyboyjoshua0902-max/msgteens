@@ -33,6 +33,18 @@ a { color: var(--blue); }
 .section.alt { background: var(--blue-pale); }
 section[id] { scroll-margin-top: calc(var(--nav-h) + 8px); }
 
+/* ── PAGE TRANSITIONS ──
+   Every page fades in and rises slightly when it opens. When you click a link to
+   another page, app.js adds .is-leaving to <body> so the current page fades out
+   first. The menu bar and footer stay still. */
+main { animation: page-in 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+body.is-leaving main { opacity: 0; transition: opacity 0.16s ease-in; }
+@keyframes page-in { from { opacity: 0; transform: translateY(14px); } }
+@media (prefers-reduced-motion: reduce) {
+  main { animation: none; }
+  body.is-leaving main { opacity: 1; transition: none; }
+}
+
 /* ── NAV ── */
 nav {
   position: sticky; top: 0; z-index: 100;
