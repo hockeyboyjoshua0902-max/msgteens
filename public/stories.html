@@ -56,7 +56,12 @@
 
 <section class="section" id="teen-stories">
   <div class="container">
-    <div class="ts-grid" id="tsGrid"></div>
+    <div class="ts-grid" id="tsGrid" aria-busy="true">
+      <!-- Placeholder cards while stories load, so the page doesn't jump -->
+      <div class="ts-card ts-skeleton" aria-hidden="true"><div class="sk-photo"></div><div class="ts-body"><span class="sk-line short"></span><span class="sk-line title"></span><span class="sk-line short"></span><span class="sk-line label"></span><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line label"></span><span class="sk-line"></span></div></div>
+      <div class="ts-card ts-skeleton" aria-hidden="true"><div class="sk-photo"></div><div class="ts-body"><span class="sk-line short"></span><span class="sk-line title"></span><span class="sk-line short"></span><span class="sk-line label"></span><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line label"></span><span class="sk-line"></span></div></div>
+      <div class="ts-card ts-skeleton" aria-hidden="true"><div class="sk-photo"></div><div class="ts-body"><span class="sk-line short"></span><span class="sk-line title"></span><span class="sk-line short"></span><span class="sk-line label"></span><span class="sk-line"></span><span class="sk-line"></span><span class="sk-line label"></span><span class="sk-line"></span></div></div>
+    </div>
     <p class="ts-empty" id="tsEmpty" hidden>No stories yet. <a href="submit.html">Be the first to share one →</a></p>
   </div>
 </section>

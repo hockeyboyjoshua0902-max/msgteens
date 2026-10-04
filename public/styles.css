@@ -37,9 +37,9 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + 8px); }
    Every page fades in and rises slightly when it opens. When you click a link to
    another page, app.js adds .is-leaving to <body> so the current page fades out
    first. The menu bar and footer stay still. */
-main { animation: page-in 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
-body.is-leaving main { opacity: 0; transition: opacity 0.16s ease-in; }
-@keyframes page-in { from { opacity: 0; transform: translateY(14px); } }
+main { animation: page-in 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
+body.is-leaving main { opacity: 0; transition: opacity 0.24s ease; }
+@keyframes page-in { from { opacity: 0; transform: translateY(8px); } }
 @media (prefers-reduced-motion: reduce) {
   main { animation: none; }
   body.is-leaving main { opacity: 1; transition: none; }
@@ -150,13 +150,7 @@ nav {
 .hero h1 em { color: var(--blue); font-style: normal; }
 .hero-sub { font-size: 19px; color: #555; max-width: 540px; margin: 0 auto 40px; }
 .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
-.hero .container > * { animation: fadeUp 0.6s ease both; }
-.hero .container > :nth-child(2) { animation-delay: 0.1s; }
-.hero .container > :nth-child(3) { animation-delay: 0.2s; }
-.hero .container > :nth-child(4) { animation-delay: 0.3s; }
 @media (prefers-reduced-motion: reduce) {
-  .hero .container > * { animation: none; }
   html { scroll-behavior: auto; }
 }
 
@@ -193,6 +187,21 @@ nav {
   align-self: flex-start; margin-top: 6px; background: none; border: none; padding: 0;
   color: var(--blue); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
   border-bottom: 2px solid var(--blue-light);
+}
+/* Loading placeholders (replaced when stories arrive) */
+.ts-skeleton { pointer-events: none; }
+.sk-photo { aspect-ratio: 4/3; background: var(--blue-pale); }
+.sk-line { display: block; height: 12px; border-radius: 6px; background: var(--blue-pale); }
+.sk-line.title { height: 22px; width: 60%; margin: 4px 0 6px; }
+.sk-line.short { width: 35%; }
+.sk-line.label { width: 28%; height: 10px; margin-top: 8px; }
+.ts-skeleton .ts-body { gap: 14px; }
+.ts-skeleton .sk-photo, .ts-skeleton .sk-line { animation: sk-pulse 1.4s ease-in-out infinite; }
+@keyframes sk-pulse { 50% { opacity: 0.45; } }
+/* Real story cards fade in gently, one after another */
+.ts-card.is-new { animation: page-in 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
+@media (prefers-reduced-motion: reduce) {
+  .ts-skeleton .sk-photo, .ts-skeleton .sk-line, .ts-card.is-new { animation: none; }
 }
 .ts-empty { text-align: center; color: #555; font-size: 17px; }
 .ts-empty a { font-weight: 600; }
