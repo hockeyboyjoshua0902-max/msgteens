@@ -191,6 +191,11 @@ nav {
 }
 .featured-media { aspect-ratio: 4/3; border-radius: var(--radius); overflow: hidden; background: var(--blue-light); }
 .featured-img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; display: block; } /* keep faces in portrait photos */
+.featured-media { display: block; transition: transform 0.2s, box-shadow 0.2s; }
+a.featured-media:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.12); }
+.featured h2 a { color: inherit; text-decoration: none; }
+.featured h2 a:hover { color: var(--blue); }
+.featured-link { margin-top: 24px; }
 .featured h2 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 3.5vw, 36px); line-height: 1.2; margin-bottom: 20px; }
 .featured p { color: var(--text); font-size: 17px; line-height: 1.8; }
 
@@ -203,12 +208,43 @@ nav {
   transition: transform 0.2s;
 }
 .img-tile:hover { transform: scale(1.02); }
+button.img-tile {
+  display: block; width: 100%; border: none; padding: 0; cursor: pointer;
+  font: inherit; text-align: left; background: var(--blue-light);
+}
+button.img-tile:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
 .img-tile img { width: 100%; height: 100%; object-fit: cover; }
 .img-tile-label {
   position: absolute; bottom: 0; left: 0; right: 0;
   background: linear-gradient(transparent, rgba(0,0,0,0.7));
   color: var(--white); padding: 24px 18px 14px; font-size: 14px; font-weight: 600;
 }
+
+/* ── GALLERY POP-UP ── */
+.activity-dialog {
+  width: min(680px, calc(100% - 32px)); max-height: calc(100% - 48px);
+  margin: auto; padding: 0; border: none; border-radius: var(--radius);
+  overflow-y: auto; background: var(--white); color: var(--black);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+}
+.activity-dialog::backdrop { background: rgba(17,17,17,0.6); }
+.activity-dialog img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+.dialog-body { padding: 32px 36px 40px; }
+.dialog-body h2 { font-family: 'Playfair Display', serif; font-size: 30px; line-height: 1.2; margin-bottom: 18px; }
+.dialog-body p { font-size: 16px; line-height: 1.75; color: var(--text); }
+.dialog-body p + p { margin-top: 16px; }
+.dialog-body .fun-fact {
+  margin-top: 28px; padding: 20px 22px; border-radius: 12px;
+  background: var(--blue-pale); border-left: 4px solid var(--blue); color: var(--black);
+}
+.fun-fact strong { display: block; margin-bottom: 6px; color: var(--blue); }
+.dialog-close {
+  position: sticky; top: 12px; float: right; margin: 12px 12px -56px 0; z-index: 1;
+  width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer;
+  background: rgba(255,255,255,0.92); color: var(--black); font-size: 18px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.dialog-close:hover { background: var(--white); }
 
 /* ── CALL-TO-ACTION BANNER ── */
 .cta-banner { background: var(--black); color: var(--white); padding: 88px 0; }
@@ -375,5 +411,7 @@ footer a:hover { text-decoration: underline; }
   .cta-banner .container { flex-direction: column; text-align: center; }
   .form-card { padding: 32px 22px; }
   .story-form .row { grid-template-columns: 1fr; }
+  .dialog-body { padding: 24px 22px 32px; }
+  .dialog-body h2 { font-size: 26px; }
   .footer-top { flex-direction: column; }
 }
