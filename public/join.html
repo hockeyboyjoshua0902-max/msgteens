@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Join — MSG Teens</title>
+<meta name="description" content="Create a free MSG Teens account to earn points and get featured.">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- NAV (same on every page; generated together so they stay in sync) -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="14" cy="14" r="5" fill="#5B3FD4"/>
+          <circle cx="4" cy="8" r="2.5" fill="#5B3FD4" opacity="0.6"/>
+          <circle cx="24" cy="8" r="2.5" fill="#5B3FD4" opacity="0.6"/>
+          <circle cx="4" cy="20" r="2.5" fill="#5B3FD4" opacity="0.6"/>
+          <circle cx="24" cy="20" r="2.5" fill="#5B3FD4" opacity="0.6"/>
+          <line x1="9" y1="11" x2="6" y2="9.5" stroke="#5B3FD4" stroke-width="1.5" stroke-dasharray="2 2"/>
+          <line x1="19" y1="11" x2="22" y2="9.5" stroke="#5B3FD4" stroke-width="1.5" stroke-dasharray="2 2"/>
+          <line x1="9" y1="17" x2="6" y2="18.5" stroke="#5B3FD4" stroke-width="1.5" stroke-dasharray="2 2"/>
+          <line x1="19" y1="17" x2="22" y2="18.5" stroke="#5B3FD4" stroke-width="1.5" stroke-dasharray="2 2"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">MSG Teens</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="stories.html">Wall of Fame</a></li>
+      <li><a href="submit.html">Submit a Story</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="join.html" class="nav-cta" aria-current="page">Join Now</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+<header class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Join the Community</p>
+    <h1>Be part of the change</h1>
+    <p>Sign up to earn points, get featured, and show adults what teens are really made of.</p>
+  </div>
+</header>
+
+<section class="section alt" id="signup">
+  <div class="container join-layout">
+    <div class="form-card">
+      <div id="signupView">
+        <h2>Create your account</h2>
+        <p class="sub">It's free and takes less than a minute.</p>
+        <form class="signup-form" id="signupForm">
+          <input type="text" placeholder="Your name" id="name" required maxlength="200" aria-label="Your name">
+          <input type="email" placeholder="Email address" id="email" required autocomplete="email" aria-label="Email address">
+          <input type="password" placeholder="Password (at least 6 characters)" id="password" required minlength="6" autocomplete="new-password" aria-label="Password">
+          <input type="text" placeholder="School name" id="school" maxlength="200" aria-label="School name">
+          <select id="role" aria-label="I am a...">
+            <option value="">I am a...</option>
+            <option value="teen">Teen</option>
+            <option value="parent">Parent / Guardian</option>
+            <option value="teacher">Teacher / Coach</option>
+            <option value="community">Community Member</option>
+          </select>
+          <button type="submit">Join MSG Teens →</button>
+          <p class="auth-switch">Already have an account? <a href="#" data-show="login">Log in</a></p>
+        </form>
+      </div>
+
+      <div id="loginView" hidden>
+        <h2>Welcome back</h2>
+        <p class="sub">Log in to your MSG Teens account.</p>
+        <form class="signup-form" id="loginForm">
+          <input type="email" placeholder="Email address" id="loginEmail" required autocomplete="email" aria-label="Email address">
+          <input type="password" placeholder="Password" id="loginPassword" required autocomplete="current-password" aria-label="Password">
+          <button type="submit">Log In →</button>
+          <p class="auth-switch">New here? <a href="#" data-show="signup">Create an account</a></p>
+        </form>
+      </div>
+
+      <div id="accountView" class="account-panel" hidden>
+        <h2>My account</h2>
+        <p class="account-name">Welcome, <strong id="accountName"></strong>!</p>
+        <p class="account-meta"><span id="accountSchool"></span><span id="accountPoints"></span></p>
+        <div class="account-actions">
+          <a href="submit.html" class="btn-primary">Submit a Story</a>
+          <a href="admin.html" id="adminLink" class="btn-outline" hidden>Admin panel</a>
+          <button type="button" id="logoutBtn" class="btn-outline">Log Out</button>
+        </div>
+      </div>
+
+      <p class="form-msg" id="formMsg" hidden></p>
+    </div>
+
+    <div>
+      <ul class="perks">
+        <li><span><strong>Share stories</strong> about yourself or teens you know.</span></li>
+        <li><span><strong>Earn points</strong> for doing good in your community.</span></li>
+        <li><span><strong>Get featured</strong> on the Wall of Fame and the leaderboard.</span></li>
+      </ul>
+
+      <div class="leaderboard">
+        <h3>🏆 Leaderboard</h3>
+        <p class="leaderboard-month">May 2026 · Resets monthly</p>
+        <div class="leaderboard-entry">
+          <div class="rank gold">1</div>
+          <div class="entry-info"><div class="entry-name">Aaliyah M.</div><div class="entry-action">Led a food drive</div></div>
+          <div class="entry-pts">47 pts</div>
+        </div>
+        <div class="leaderboard-entry">
+          <div class="rank silver">2</div>
+          <div class="entry-info"><div class="entry-name">Marcus T.</div><div class="entry-action">Tutored 3 students</div></div>
+          <div class="entry-pts">38 pts</div>
+        </div>
+        <div class="leaderboard-entry">
+          <div class="rank bronze">3</div>
+          <div class="entry-info"><div class="entry-name">Sofia R.</div><div class="entry-action">Community mural</div></div>
+          <div class="entry-pts">31 pts</div>
+        </div>
+        <div class="leaderboard-entry">
+          <div class="rank">4</div>
+          <div class="entry-info"><div class="entry-name">Darius W.</div><div class="entry-action">Helped elderly neighbor</div></div>
+          <div class="entry-pts">24 pts</div>
+        </div>
+        <div class="leaderboard-entry">
+          <div class="rank">5</div>
+          <div class="entry-info"><div class="entry-name">Priya K.</div><div class="entry-action">Organized cleanup</div></div>
+          <div class="entry-pts">19 pts</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <strong>MSG Teens</strong>
+        Misunderstood. Just like MSG.<br>
+        Founded by Joshua Wright (Central Catholic) · Co&#8209;founder Annabelle Wright · Pittsburgh, PA
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="stories.html">Wall of Fame</a>
+        <a href="submit.html">Submit a Story</a>
+        <a href="about.html">About</a>
+        <a href="join.html">Join</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 MSG Teens. All rights reserved.</div>
+  </div>
+</footer>
+
+<!-- config.js is generated at build time from Vercel environment variables (scripts/build-config.js) -->
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+<script>
+const db = MSG.db;
+  const signupForm = document.getElementById('signupForm');
+  const loginForm = document.getElementById('loginForm');
+  const msg = document.getElementById('formMsg');
+  // After logging in, go back to the page that sent you here (only our own pages).
+  const next = new URLSearchParams(location.search).get('next');
+  const nextPage = ['submit.html', 'stories.html', 'admin.html'].includes(next) ? next : null;
+
+  function showMessage(text, isError) {
+    msg.textContent = text;
+    msg.className = 'form-msg ' + (isError ? 'error' : 'ok');
+    msg.hidden = false;
+  }
+
+  function showView(view) {
+    document.getElementById('signupView').hidden = view !== 'signup';
+    document.getElementById('loginView').hidden = view !== 'login';
+    document.getElementById('accountView').hidden = view !== 'account';
+  }
+
+  async function showAccount(user) {
+    const { data: profile } = await db.from('profiles')
+      .select('name, school, points, is_admin').eq('id', user.id).single();
+    document.getElementById('accountName').textContent = profile ? profile.name : user.email;
+    document.getElementById('accountSchool').textContent = profile && profile.school ? profile.school : '';
+    document.getElementById('adminLink').hidden = !(profile && profile.is_admin);
+    document.getElementById('accountPoints').textContent = '🏆 ' + (profile ? profile.points : 0) + ' points';
+    showView('account');
+  }
+
+  async function withButton(form, busyText, fn) {
+    const btn = form.querySelector('button');
+    const label = btn.textContent;
+    btn.textContent = busyText;
+    btn.disabled = true;
+    msg.hidden = true;
+    try { await fn(); }
+    catch (err) { console.error(err); showMessage('Could not connect. Check your internet and try again.', true); }
+    btn.textContent = label;
+    btn.disabled = false;
+  }
+
+  document.querySelectorAll('[data-show]').forEach(link => link.addEventListener('click', e => {
+    e.preventDefault();
+    msg.hidden = true;
+    showView(link.dataset.show);
+  }));
+
+  signupForm.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!db) return showMessage('Sign-ups are not configured yet.', true);
+    withButton(signupForm, 'Creating account...', async () => {
+      const { data, error } = await db.auth.signUp({
+        email: document.getElementById('email').value.trim(),
+        password: document.getElementById('password').value,
+        options: {
+          emailRedirectTo: window.location.origin + '/join.html',
+          data: {
+            name: document.getElementById('name').value.trim(),
+            school: document.getElementById('school').value.trim(),
+            role: document.getElementById('role').value
+          }
+        }
+      });
+      if (error) return showMessage(error.message, true);
+      signupForm.reset();
+      if (data.session) {
+        showMessage("✓ You're in! Welcome to MSG Teens.");
+      } else {
+        showMessage('✓ Almost done! Check your email for a link to confirm your account.');
+        showView('login');
+      }
+    });
+  });
+
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!db) return showMessage('Log-in is not configured yet.', true);
+    withButton(loginForm, 'Logging in...', async () => {
+      const { error } = await db.auth.signInWithPassword({
+        email: document.getElementById('loginEmail').value.trim(),
+        password: document.getElementById('loginPassword').value
+      });
+      if (error) return showMessage(error.message, true);
+      loginForm.reset();
+      if (nextPage) location.href = nextPage;
+    });
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await db.auth.signOut();
+    msg.hidden = true;
+  });
+
+  if (nextPage) showView('login');
+  MSG.onAuth(session => {
+    if (session) showAccount(session.user);
+    else showView(nextPage ? 'login' : 'signup');
+  });
+</script>
+</body>
+</html>
