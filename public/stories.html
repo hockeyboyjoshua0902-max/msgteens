@@ -61,18 +61,19 @@
 
 <section class="section alt" id="featured">
   <div class="container featured">
-    <div class="featured-media">
+    <a class="featured-media" href="https://time.com/5916772/kid-of-the-year-2020/" target="_blank" rel="noopener" aria-label="Read TIME's Kid of the Year article about Gitanjali Rao">
       <img
         src="gitanjali-rao.jpg"
         alt="Gitanjali Rao in a lab coat at a table with molecule models"
         class="featured-img"
         onerror="this.style.visibility='hidden'"
       >
-    </div>
+    </a>
     <div>
       <p class="eyebrow">Featured Article</p>
-      <h2>Gitanjali Rao: The Teen Who Detected Lead in Water</h2>
+      <h2><a href="https://time.com/5916772/kid-of-the-year-2020/" target="_blank" rel="noopener">Gitanjali Rao: The Teen Who Detected Lead in Water</a></h2>
       <p>At 11 years old, she invented Tethys — a device to detect lead in drinking water — after learning about the Flint Water Crisis. She then built Kindly, an AI app to detect cyberbullying. TIME named her their first-ever Kid of the Year. Today she studies at MIT.</p>
+      <a class="text-link featured-link" href="https://time.com/5916772/kid-of-the-year-2020/" target="_blank" rel="noopener">Read the full article on TIME ↗</a>
     </div>
   </div>
 </section>
@@ -81,36 +82,88 @@
   <div class="container">
     <div class="section-header">
       <h2>Teens in Action</h2>
-      <p>Real teens doing real good. Every photo tells a story adults need to see.</p>
+      <p>Real teens doing real good. Tap a photo to learn more.</p>
     </div>
     <div class="img-grid">
-      <div class="img-tile">
+      <button type="button" class="img-tile" aria-haspopup="dialog">
         <img src="teen1.jpg" alt="Volunteers in gloves picking up litter into blue bags outdoors" onerror="this.parentElement.style.background='#A3CEF1';this.style.visibility='hidden'">
-        <div class="img-tile-label">Community Cleanup</div>
-      </div>
-      <div class="img-tile">
+        <span class="img-tile-label">Community Cleanup</span>
+        <!-- Text shown in the pop-up when this photo is clicked -->
+        <div class="tile-details" hidden>
+          <p>A community cleanup is exactly what it sounds like: neighbors grabbing gloves, trash bags and grabbers and clearing litter out of the places everyone shares. Parks, riverbanks, school grounds, sidewalks and empty lots all collect plastic bottles, wrappers and cigarette butts that wash into storm drains and, eventually, into rivers and oceans.</p>
+          <p>Cleanups matter because litter isn't just ugly. It harms wildlife that eats or gets tangled in it, clogs drains that prevent flooding, and sends a message that nobody cares about a place. When a group of teens shows up and turns a trashed corner into a clean one, people notice, and clean places tend to stay cleaner.</p>
+          <p>Getting started is easy. Many cities, watershed groups and park conservancies run regular cleanup days, and schools often count them as service hours. You can also organize your own: pick a spot, get permission if it's private property, bring gloves and bags, sort out recyclables and take a before-and-after photo to show the difference you made.</p>
+          <p class="fun-fact">Cigarette butts are usually the single most collected item in Ocean Conservancy's International Coastal Cleanup, beating out bottles, bags and food wrappers. Most filters are made of a type of plastic, so they don't simply biodegrade.</p>
+        </div>
+      </button>
+      <button type="button" class="img-tile" aria-haspopup="dialog">
         <img src="teen2.jpg" alt="Volunteers in matching shirts holding seedlings in cupped hands" onerror="this.parentElement.style.background='#0099CC';this.style.visibility='hidden'">
-        <div class="img-tile-label">Park Restoration</div>
-      </div>
-      <div class="img-tile">
+        <span class="img-tile-label">Park Restoration</span>
+        <!-- Text shown in the pop-up when this photo is clicked -->
+        <div class="tile-details" hidden>
+          <p>Park restoration means helping a park or green space get back to good health. Volunteers plant trees and native plants, pull out invasive species that crowd out local plants, spread mulch, repair trails and protect stream banks from erosion. The seedlings in this photo are the start of what will someday be shade, habitat and clean air.</p>
+          <p>Healthy parks do a lot of quiet work for a community. Trees cool hot streets in the summer, roots hold soil in place during heavy rain, and native plants feed bees, butterflies and birds. Parks are also free places for everyone to exercise, play and relax, which makes keeping them healthy a real public service.</p>
+          <p>Teens can join restoration days run by local park conservancies, nature centers and environmental clubs; in Pittsburgh, groups like the Pittsburgh Parks Conservancy regularly need volunteers. You'll learn to tell native plants from invasive ones, how to plant a tree properly, and you can come back years later to see how much it has grown.</p>
+          <p class="fun-fact">A single mature tree is commonly estimated to absorb around 48 pounds of carbon dioxide from the air each year, and the trees you plant as a teen could still be growing when your own grandkids visit the park.</p>
+        </div>
+      </button>
+      <button type="button" class="img-tile" aria-haspopup="dialog">
         <img src="teen3.jpg" alt="Smiling teen volunteer planting in a community garden" onerror="this.parentElement.style.background='#A3CEF1';this.style.visibility='hidden'">
-        <div class="img-tile-label">Urban Gardening</div>
-      </div>
-      <div class="img-tile">
+        <span class="img-tile-label">Urban Gardening</span>
+        <!-- Text shown in the pop-up when this photo is clicked -->
+        <div class="tile-details" hidden>
+          <p>Urban gardening is growing food and flowers in the city: on vacant lots, rooftops, schoolyards, balconies and shared community garden plots. Volunteers prepare soil, plant seeds and seedlings, water, weed and harvest vegetables, herbs and fruit that often go straight to neighbors, food pantries or school cafeterias.</p>
+          <p>Many city neighborhoods don't have a grocery store nearby, which makes fresh produce hard to find. Community gardens help fill that gap, turn empty lots into green spaces and bring neighbors of every age together. For teens, gardening is also a hands-on way to learn about science, nutrition and patience, since nothing grows overnight.</p>
+          <p>You can volunteer at a local community garden, start a garden club at school, or grow herbs in containers at home. Ask a garden coordinator about youth volunteer days. Most are happy to teach beginners, and many donate part of every harvest to people who need it.</p>
+          <p class="fun-fact">During World War II, Americans planted millions of "Victory Gardens" in backyards, schoolyards and city lots. By some estimates, they produced around 40 percent of the fresh vegetables eaten in the United States.</p>
+        </div>
+      </button>
+      <button type="button" class="img-tile" aria-haspopup="dialog">
         <img src="teen4.jpg" alt="Teen volunteers in gloves and hairnets serving food at an outdoor buffet" onerror="this.parentElement.style.background='#0099CC';this.style.visibility='hidden'">
-        <div class="img-tile-label">Food Service Volunteer</div>
-      </div>
-      <div class="img-tile">
+        <span class="img-tile-label">Food Service Volunteer</span>
+        <!-- Text shown in the pop-up when this photo is clicked -->
+        <div class="tile-details" hidden>
+          <p>Food service volunteers help prepare and serve meals to people who need them, at soup kitchens, shelters, senior centers and community meal programs. The work includes chopping vegetables, portioning food, serving plates, wiping tables and washing dishes, always with gloves and hairnets to keep food safe.</p>
+          <p>For many guests, a hot meal is about more than food. It's a warm place to sit, a friendly face and a moment of dignity. Volunteers make these programs possible: most community kitchens rely on volunteers to serve hundreds of meals a week, and a group of teens can staff an entire shift.</p>
+          <p>Most meal programs welcome teen volunteers, sometimes with a minimum age or a parent along for younger teens. Sign up as a group with friends, a sports team or a youth group, show up on time, and be ready to smile; how you treat guests matters as much as the food you serve.</p>
+          <p class="fun-fact">Soup kitchens became common across the U.S. during the Great Depression. One of the most surprising people to run one was gangster Al Capone, who opened a soup kitchen in Chicago in 1930, partly to improve his public image.</p>
+        </div>
+      </button>
+      <button type="button" class="img-tile" aria-haspopup="dialog">
         <img src="teen5.jpg" alt="Smiling volunteer with a clipboard at an outdoor food drive, with donation boxes and volunteers behind her" onerror="this.parentElement.style.background='#A3CEF1';this.style.visibility='hidden'">
-        <div class="img-tile-label">Local Food Drive</div>
-      </div>
-      <div class="img-tile">
+        <span class="img-tile-label">Local Food Drive</span>
+        <!-- Text shown in the pop-up when this photo is clicked -->
+        <div class="tile-details" hidden>
+          <p>A food drive collects donated food, usually canned and boxed goods like soup, beans, pasta, rice, peanut butter and cereal, and delivers it to a local food bank or pantry. Volunteers set up collection boxes, spread the word, sort and check donations, track what's been collected and pack everything up for delivery.</p>
+          <p>Food insecurity, not always knowing where your next meal will come from, affects millions of families, including many kids at schools near you. Food banks need steady donations all year, not just around the holidays, and a single school food drive can stock a pantry's shelves for weeks.</p>
+          <p>Teens are great at running food drives. Pick a goal and a deadline, ask your local food bank which items they need most, set up boxes at school, church or work, and make it a competition between grades or homerooms. Remember to check expiration dates when sorting, because food banks can't use expired items.</p>
+          <p class="fun-fact">Canned food exists because of a contest. In 1795, the French government offered a cash prize for a better way to preserve food for its army. Confectioner Nicolas Appert won it in 1810 by sealing food in glass jars and boiling them, the method that led to canning.</p>
+        </div>
+      </button>
+      <button type="button" class="img-tile" aria-haspopup="dialog">
         <img src="teen6.jpg" alt="Volunteers in matching shirts painting over a graffiti wall with rollers" onerror="this.parentElement.style.background='#0099CC';this.style.visibility='hidden'">
-        <div class="img-tile-label">Community Mural</div>
-      </div>
+        <span class="img-tile-label">Community Mural</span>
+        <!-- Text shown in the pop-up when this photo is clicked -->
+        <div class="tile-details" hidden>
+          <p>A community mural is a large painting on a public wall, designed and painted by people from the neighborhood. Projects often start by painting over graffiti and priming the wall, like the volunteers in this photo, before artists and volunteers sketch the design and fill it in, section by section.</p>
+          <p>Murals turn blank or tagged walls into landmarks. They can celebrate local history, honor community heroes or share a message everyone can see, and neighborhoods with murals often see less graffiti afterward. Working on one also gives teens a real say in how their community looks.</p>
+          <p>You don't have to be a great artist to help. Mural projects need people to clean and prime walls, fill in large areas of color and clean brushes. Look for public art programs, art teachers or community organizations planning a mural, and pitch your own idea for a wall at your school.</p>
+          <p class="fun-fact">Philadelphia's Mural Arts program started in 1984 as an anti-graffiti effort and has since created more than 4,000 murals, which is why Philadelphia is often called the "City of Murals."</p>
+        </div>
+      </button>
     </div>
   </div>
 </section>
+
+<!-- Pop-up for the Teens in Action photos (filled from the clicked tile's .tile-details) -->
+<dialog class="activity-dialog" id="activityDialog" aria-labelledby="activityTitle">
+  <button type="button" class="dialog-close" id="activityClose" aria-label="Close">✕</button>
+  <img id="activityImg" alt="">
+  <div class="dialog-body">
+    <h2 id="activityTitle"></h2>
+    <div id="activityText"></div>
+  </div>
+</dialog>
 
 <section class="cta-banner">
   <div class="container">
@@ -147,6 +200,26 @@
 <script src="app.js"></script>
 <script>
 MSG.loadStories({ grid: document.getElementById('tsGrid'), empty: document.getElementById('tsEmpty') });
+
+  // ── Teens in Action pop-up ──
+  const dialog = document.getElementById('activityDialog');
+  document.querySelectorAll('.img-tile').forEach(tile => tile.addEventListener('click', () => {
+    const img = tile.querySelector('img');
+    const shown = document.getElementById('activityImg');
+    shown.hidden = img.style.visibility === 'hidden';
+    shown.src = img.src;
+    shown.alt = img.alt;
+    document.getElementById('activityTitle').textContent = tile.querySelector('.img-tile-label').textContent;
+    const text = document.getElementById('activityText');
+    text.replaceChildren(...[...tile.querySelector('.tile-details').children].map(p => p.cloneNode(true)));
+    const fact = text.querySelector('.fun-fact');
+    if (fact) fact.insertAdjacentHTML('afterbegin', '<strong>💡 Fun fact</strong>');
+    dialog.showModal();
+    dialog.scrollTop = 0;
+  }));
+  document.getElementById('activityClose').addEventListener('click', () => dialog.close());
+  // Clicking the dark area outside the box closes it too.
+  dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); });
 </script>
 </body>
 </html>
