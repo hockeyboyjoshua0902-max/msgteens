@@ -7,12 +7,12 @@ All pages live in `public/` and share `styles.css` (look) and `app.js`
 
 | Page | File |
 |---|---|
-| Home | `index.html` |
+| Home (includes the leaderboard) | `index.html` |
 | Wall of Fame (approved stories, featured article, gallery) | `stories.html` |
 | Submit a Story | `submit.html` |
 | Research (published research + "Add Research" form) | `research.html` |
 | About (our story, founders) | `about.html` |
-| Join (sign up / log in / my account, leaderboard) | `join.html` |
+| Join (sign up / log in / my account) | `join.html` |
 | Admin panel | `admin.html` |
 
 The menu and footer are repeated in each page, so change them in every
