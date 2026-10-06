@@ -140,7 +140,8 @@
 
   // ── Likes & comments ──
   // reactions(kind, id) returns a like button + comments section for one story
-  // ('story', its id) or article ('article', page name without .html).
+  // ('story', its id), research entry ('research', its id) or article
+  // ('article', page name without .html).
   // Pass { open: true } to show the comments straight away.
   // The database refuses comments with swear words (see supabase/schema.sql).
   const bars = [];

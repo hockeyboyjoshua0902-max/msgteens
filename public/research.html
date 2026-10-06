@@ -210,6 +210,8 @@
     return list;
   }
 
+  const reactionBars = {};
+
   function researchCard(r, i) {
     const card = make('article', 'ts-card is-new');
     card.style.animationDelay = Math.min(i, 5) * 70 + 'ms';
@@ -248,7 +250,9 @@
     toggle.addEventListener('click', () => {
       toggle.textContent = card.classList.toggle('open') ? 'Show less' : 'Read full research';
     });
-    body.appendChild(toggle);
+    // Likes & comments, kept per entry so switching topics doesn't reset them.
+    if (!reactionBars[r.id]) reactionBars[r.id] = MSG.reactions('research', String(r.id));
+    body.append(toggle, reactionBars[r.id]);
     card.appendChild(body);
     return card;
   }

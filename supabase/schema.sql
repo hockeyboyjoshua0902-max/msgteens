@@ -438,9 +438,10 @@ create policy "Anyone can view approved research photos"
   using (bucket_id = 'research-photos' and public.is_approved_research_photo(name));
 
 -- ─────────────────────────────────────────────
--- LIKES & COMMENTS on stories and articles.
+-- LIKES & COMMENTS on stories, research and articles.
 -- item_type says what kind of thing it is; item_id says which one:
---   'story'   -> the story's id (e.g. '12')
+--   'story'    -> the story's id (e.g. '12')
+--   'research' -> the research entry's id (e.g. '3')
 --   'article' -> the article page's name without .html (e.g. 'gitanjali-rao')
 -- Anyone can see like counts and comments; you must be logged in to like
 -- or comment. Comments with swear words are refused by the database.
@@ -496,6 +497,8 @@ as $$
   select case kind
     when 'story'   then item ~ '^\d{1,18}$'
                         and exists (select 1 from public.stories where id = item::bigint and status = 'approved')
+    when 'research' then item ~ '^\d{1,18}$'
+                        and exists (select 1 from public.research where id = item::bigint and status = 'approved')
     when 'article' then item ~ '^[a-z0-9-]{1,100}$'
     else false
   end;
@@ -506,7 +509,7 @@ grant execute on function public.is_reactable(text, text) to authenticated;
 
 -- LIKES: one per person per item. Click again to unlike (delete the row).
 create table if not exists public.likes (
-  item_type   text not null check (item_type in ('story', 'article')),
+  item_type   text not null check (item_type in ('story', 'research', 'article')),
   item_id     text not null check (char_length(item_id) between 1 and 100),
   user_id     uuid not null default auth.uid() references public.profiles (id) on delete cascade,
   created_at  timestamptz not null default now(),
@@ -514,6 +517,11 @@ create table if not exists public.likes (
 );
 
 create index if not exists likes_user_id_idx on public.likes (user_id);
+
+-- Upgrades a likes table made before research could be liked.
+alter table public.likes drop constraint if exists likes_item_type_check;
+alter table public.likes add constraint likes_item_type_check
+  check (item_type in ('story', 'research', 'article'));
 
 alter table public.likes enable row level security;
 
@@ -542,13 +550,18 @@ create table if not exists public.comments (
   id          bigint generated always as identity primary key,
   created_at  timestamptz not null default now(),
   user_id     uuid not null default auth.uid() references public.profiles (id) on delete cascade,
-  item_type   text not null check (item_type in ('story', 'article')),
+  item_type   text not null check (item_type in ('story', 'research', 'article')),
   item_id     text not null check (char_length(item_id) between 1 and 100),
   body        text not null check (char_length(trim(body)) between 1 and 1000)
 );
 
 create index if not exists comments_item_idx on public.comments (item_type, item_id, created_at);
 create index if not exists comments_user_id_idx on public.comments (user_id);
+
+-- Upgrades a comments table made before research could be commented on.
+alter table public.comments drop constraint if exists comments_item_type_check;
+alter table public.comments add constraint comments_item_type_check
+  check (item_type in ('story', 'research', 'article'));
 
 alter table public.comments enable row level security;
 

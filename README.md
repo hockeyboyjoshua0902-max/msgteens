@@ -93,8 +93,8 @@ update public.profiles set is_admin = true where email = 'you@example.com';
   Editor (safe to re-run).
 
 ### Likes & comments
-Every story card (home page and Wall of Fame) and the Gitanjali Rao article
-have a ♥ like button and a 💬 comments section. Anyone can see likes and
+Every story card (home page and Wall of Fame), every research entry
+(`research.html`) and the Gitanjali Rao article have a ♥ like button and a 💬 comments section. Anyone can see likes and
 comments; you need to be logged in to like or comment. Comments show only
 the commenter's first name. People can delete their own comments, and admins
 can delete anyone's (or delete rows in Table Editor → `comments`).
