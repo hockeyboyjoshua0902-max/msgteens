@@ -10,12 +10,13 @@ All pages live in `public/` and share `styles.css` (look) and `app.js`
 | Home | `index.html` |
 | Wall of Fame (approved stories, featured article, gallery) | `stories.html` |
 | Submit a Story | `submit.html` |
+| Research (published research + "Add Research" form) | `research.html` |
 | About (our story, founders) | `about.html` |
 | Join (sign up / log in / my account, leaderboard) | `join.html` |
 | Admin panel | `admin.html` |
 
-The menu and footer are repeated in each page, so change them in all five
-public pages. Old one-page links like `msgteens.com/#story` redirect to the
+The menu and footer are repeated in each page, so change them in every
+public page. Old one-page links like `msgteens.com/#story` redirect to the
 matching page.
 
 ## Accounts & data (Supabase)
@@ -79,6 +80,17 @@ update public.profiles set is_admin = true where email = 'you@example.com';
 - After changing `supabase/schema.sql`, run the whole file again in the SQL
   Editor; it's safe to re-run and upgrades existing tables.
 - Award points: Table Editor → `profiles` → edit `points`.
+
+### Research page
+`research.html` lists published research and has an "Add Research" form
+(log in required), just like Submit a Story. Entries are saved to the
+`research` table, with an optional chart/photo in the private
+`research-photos` bucket.
+- Research added by an **admin** account goes live right away.
+- Everyone else's arrives as `pending`; approve or reject it in the admin
+  panel's **Research** tab.
+- To create the table, run the whole `supabase/schema.sql` again in the SQL
+  Editor (safe to re-run).
 
 ### Local testing
 ```

@@ -283,3 +283,156 @@ drop policy if exists "Anyone can view approved story photos" on storage.objects
 create policy "Anyone can view approved story photos"
   on storage.objects for select to anon, authenticated
   using (bucket_id = 'story-photos' and public.is_approved_story_photo(name));
+
+-- ─────────────────────────────────────────────
+-- RESEARCH: research write-ups submitted by signed-in users (research.html),
+-- shown publicly once approved. Works like STORIES above. Research added by
+-- an admin is published straight away; everyone else's waits for review.
+-- ─────────────────────────────────────────────
+create table if not exists public.research (
+  id                bigint generated always as identity primary key,
+  created_at        timestamptz not null default now(),
+  user_id           uuid not null default auth.uid() references public.profiles (id) on delete cascade,
+  status            text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  researcher_name   text not null check (char_length(researcher_name) between 1 and 200),
+  grade_level       text check (grade_level in ('6th', '7th', '8th', '9th', '10th', '11th', '12th', 'Other')),
+  school            text not null check (char_length(school) between 1 and 200),
+  title             text not null check (char_length(title) between 1 and 200),
+  topic             text not null check (topic in ('Mental Health', 'Social Media & Technology', 'School & Education',
+                                                   'Stereotypes & Perception', 'Community & Volunteering', 'Other')),
+  question          text not null check (char_length(question) between 1 and 5000),
+  method            text not null check (char_length(method) between 1 and 10000),
+  findings          text not null check (char_length(findings) between 1 and 10000),
+  why_important     text not null check (char_length(why_important) between 1 and 10000),
+  sources           text not null check (char_length(sources) between 1 and 10000),
+  photo_path        text check (char_length(photo_path) <= 500),
+  photo_description text check (char_length(photo_description) <= 1000),
+  permission        boolean not null default false check (permission)
+);
+
+create index if not exists research_user_id_idx on public.research (user_id);
+
+alter table public.research enable row level security;
+
+revoke all on public.research from anon, authenticated;
+grant select on public.research to authenticated;
+grant insert (researcher_name, grade_level, school, title, topic, question, method,
+              findings, why_important, sources, photo_path, photo_description, permission)
+  on public.research to authenticated;
+
+drop policy if exists "Users can read their own research" on public.research;
+create policy "Users can read their own research"
+  on public.research for select to authenticated
+  using ((select auth.uid()) = user_id);
+
+drop policy if exists "Users can submit research" on public.research;
+create policy "Users can submit research"
+  on public.research for insert to authenticated
+  with check ((select auth.uid()) = user_id);
+
+drop policy if exists "Admins can view all research" on public.research;
+create policy "Admins can view all research"
+  on public.research for select to authenticated
+  using ((select public.is_admin()));
+
+-- Admins' own research goes live right away.
+create or replace function public.research_auto_approve_admin()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if public.is_admin() then
+    new.status := 'approved';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists research_auto_approve on public.research;
+create trigger research_auto_approve
+  before insert on public.research
+  for each row execute function public.research_auto_approve_admin();
+
+create or replace function public.admin_set_research_status(research_id bigint, new_status text)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if not public.is_admin() then
+    raise exception 'Only admins can do this' using errcode = '42501';
+  end if;
+  update public.research set status = new_status where id = research_id;
+  if not found then
+    raise exception 'Research % not found', research_id;
+  end if;
+end;
+$$;
+
+revoke all on function public.admin_set_research_status(bigint, text) from public, anon;
+grant execute on function public.admin_set_research_status(bigint, text) to authenticated;
+
+-- Public list for research.html: approved research only, no submitter details.
+create or replace function public.get_approved_research()
+returns table (
+  id bigint, created_at timestamptz, researcher_name text, grade_level text, school text,
+  title text, topic text, question text, method text, findings text,
+  why_important text, sources text, photo_path text, photo_description text
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select id, created_at, researcher_name, grade_level, school, title, topic, question,
+         method, findings, why_important, sources, photo_path, photo_description
+  from public.research
+  where status = 'approved'
+  order by created_at desc;
+$$;
+
+revoke all on function public.get_approved_research() from public;
+grant execute on function public.get_approved_research() to anon, authenticated;
+
+-- RESEARCH PHOTOS: private bucket, same rules as story photos.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('research-photos', 'research-photos', false, 5242880,
+        array['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'])
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "Users can upload research photos" on storage.objects;
+create policy "Users can upload research photos"
+  on storage.objects for insert to authenticated
+  with check (
+    bucket_id = 'research-photos'
+    and (storage.foldername(name))[1] = (select auth.uid())::text
+  );
+
+drop policy if exists "Admins can view research photos" on storage.objects;
+create policy "Admins can view research photos"
+  on storage.objects for select to authenticated
+  using (bucket_id = 'research-photos' and (select public.is_admin()));
+
+create or replace function public.is_approved_research_photo(path text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (select 1 from public.research where photo_path = path and status = 'approved');
+$$;
+
+revoke all on function public.is_approved_research_photo(text) from public;
+grant execute on function public.is_approved_research_photo(text) to anon, authenticated;
+
+drop policy if exists "Anyone can view approved research photos" on storage.objects;
+create policy "Anyone can view approved research photos"
+  on storage.objects for select to anon, authenticated
+  using (bucket_id = 'research-photos' and public.is_approved_research_photo(name));

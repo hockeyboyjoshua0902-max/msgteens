@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research — MSG Teens</title>
+<meta name="description" content="Research by teens, about teens: what we asked, what we found, and why it matters.">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- NAV (same on every page; generated together so they stay in sync) -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="14" cy="14" r="5" fill="#5B3FD4"/>
+          <circle cx="4" cy="8" r="2.5" fill="#5B3FD4" opacity="0.6"/>
+          <circle cx="24" cy="8" r="2.5" fill="#5B3FD4" opacity="0.6"/>
+          <circle cx="4" cy="20" r="2.5" fill="#5B3FD4" opacity="0.6"/>
+          <circle cx="24" cy="20" r="2.5" fill="#5B3FD4" opacity="0.6"/>
+          <line x1="9" y1="11" x2="6" y2="9.5" stroke="#5B3FD4" stroke-width="1.5" stroke-dasharray="2 2"/>
+          <line x1="19" y1="11" x2="22" y2="9.5" stroke="#5B3FD4" stroke-width="1.5" stroke-dasharray="2 2"/>
+          <line x1="9" y1="17" x2="6" y2="18.5" stroke="#5B3FD4" stroke-width="1.5" stroke-dasharray="2 2"/>
+          <line x1="19" y1="17" x2="22" y2="18.5" stroke="#5B3FD4" stroke-width="1.5" stroke-dasharray="2 2"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">MSG Teens</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="stories.html">Wall of Fame</a></li>
+      <li><a href="submit.html">Submit a Story</a></li>
+      <li><a href="research.html" aria-current="page">Research</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="join.html" class="nav-cta">Join Now</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+<header class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Research</p>
+    <h1>What the research says</h1>
+    <p>Research by teens, about teens: the questions we asked, what we found, and why it matters.</p>
+  </div>
+</header>
+
+<section class="section" id="findings">
+  <div class="container">
+    <div class="section-header">
+      <p class="eyebrow">Findings</p>
+      <h2>Published research</h2>
+    </div>
+    <div class="toolbar-chips" id="topicFilters" hidden></div>
+    <div class="ts-grid" id="researchGrid" aria-busy="true">
+      <article class="ts-card ts-skeleton" aria-hidden="true"><div class="ts-body"><span class="sk-line short"></span><span class="sk-line title"></span><span class="sk-line short"></span><span class="sk-line label"></span><span class="sk-line"></span><span class="sk-line"></span></div></article>
+      <article class="ts-card ts-skeleton" aria-hidden="true"><div class="ts-body"><span class="sk-line short"></span><span class="sk-line title"></span><span class="sk-line short"></span><span class="sk-line label"></span><span class="sk-line"></span><span class="sk-line"></span></div></article>
+      <article class="ts-card ts-skeleton" aria-hidden="true"><div class="ts-body"><span class="sk-line short"></span><span class="sk-line title"></span><span class="sk-line short"></span><span class="sk-line label"></span><span class="sk-line"></span><span class="sk-line"></span></div></article>
+    </div>
+    <p class="ts-empty" id="researchEmpty" hidden>No research published yet. <a href="#add">Be the first to add yours.</a></p>
+  </div>
+</section>
+
+<section class="section alt" id="add">
+  <div class="container">
+    <div class="section-header">
+      <p class="eyebrow">Add Research</p>
+      <h2>Share your research</h2>
+      <p>Did a survey, read up on a topic, or ran a project? Tell us what you found.</p>
+    </div>
+
+    <div class="form-card story-card story-login" id="researchLogin">
+      <p>Log in or create a free account to add research.</p>
+      <a href="join.html?next=research.html" class="btn-primary">Log In / Sign Up</a>
+    </div>
+
+    <div class="form-card story-card" id="researchCard" hidden>
+      <form class="story-form" id="researchForm">
+        <fieldset>
+          <legend>About You</legend>
+          <label><span>Your name <span class="req">*</span></span>
+            <input type="text" id="researcherName" required maxlength="200"></label>
+          <div class="row">
+            <label><span>School name <span class="req">*</span></span>
+              <input type="text" id="researchSchool" required maxlength="200"></label>
+            <label><span>Grade level</span>
+              <select id="gradeLevel"><option value="">Choose…</option><option>6th</option><option>7th</option><option>8th</option><option>9th</option><option>10th</option><option>11th</option><option>12th</option><option>Other</option></select></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Your Research</legend>
+          <label><span>Title <span class="req">*</span></span>
+            <input type="text" id="researchTitle" required maxlength="200" placeholder="e.g. How much sleep do teens at my school get?"></label>
+          <label><span>Topic <span class="req">*</span></span>
+            <select id="researchTopic" required>
+              <option value="">Choose…</option>
+              <option>Mental Health</option>
+              <option>Social Media &amp; Technology</option>
+              <option>School &amp; Education</option>
+              <option>Stereotypes &amp; Perception</option>
+              <option>Community &amp; Volunteering</option>
+              <option>Other</option>
+            </select></label>
+          <label><span>What did you want to find out? <span class="req">*</span></span>
+            <textarea id="researchQuestion" required maxlength="5000"></textarea></label>
+          <label><span>How did you research it? <span class="req">*</span></span>
+            <span class="hint">e.g. a survey of 50 classmates, interviews, articles and studies you read.</span>
+            <textarea id="researchMethod" required maxlength="10000"></textarea></label>
+          <label><span>What did you find? <span class="req">*</span></span>
+            <textarea id="researchFindings" required maxlength="10000"></textarea></label>
+          <label><span>Why is this research important? <span class="req">*</span></span>
+            <textarea id="whyImportant" required maxlength="10000"></textarea></label>
+          <label><span>Sources <span class="req">*</span></span>
+            <span class="hint">One per line. Links are fine. Write “My own survey” if you collected the data yourself.</span>
+            <textarea id="researchSources" required maxlength="10000"></textarea></label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Image &amp; Permission</legend>
+          <label>Upload a chart, graph or photo (optional, max 5 MB)
+            <input type="file" id="photoFile" accept="image/jpeg,image/png,image/webp,image/heic,image/heif"></label>
+          <label>Image description (optional)
+            <input type="text" id="photoDescription" maxlength="1000"></label>
+          <label class="choice"><input type="checkbox" id="permission" required> MSG Teens has permission to share this research and image. <span class="req">*</span></label>
+        </fieldset>
+
+        <button type="submit" id="researchSubmit">Submit Research →</button>
+        <p class="form-msg" id="researchMsg" hidden></p>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <strong>MSG Teens</strong>
+        Misunderstood. Just like MSG.<br>
+        Founded by Joshua Wright (Central Catholic) · Co&#8209;founder Annabelle Wright · Pittsburgh, PA
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="stories.html">Wall of Fame</a>
+        <a href="submit.html">Submit a Story</a>
+        <a href="research.html">Research</a>
+        <a href="about.html">About</a>
+        <a href="join.html">Join</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 MSG Teens. All rights reserved.</div>
+  </div>
+</footer>
+
+<!-- config.js is generated at build time from Vercel environment variables (scripts/build-config.js) -->
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+<script>
+  const db = MSG.db;
+  const field = id => document.getElementById(id);
+  const form = field('researchForm');
+  const msg = field('researchMsg');
+  const btn = field('researchSubmit');
+  const grid = field('researchGrid');
+  const empty = field('researchEmpty');
+  let currentUser = null;
+  let isAdmin = false;
+  let research = [];
+  let photoUrls = {};
+  let topic = 'All';
+
+  // Research is visitor-written, so build everything with textContent (never innerHTML).
+  function make(tag, cls, text) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text) node.textContent = text;
+    return node;
+  }
+
+  // Sources: one per line; lines that are web links become clickable.
+  function sourceList(text) {
+    const list = make('ul', 'rs-sources');
+    text.split('\n').map(s => s.trim()).filter(Boolean).forEach(line => {
+      const li = make('li');
+      if (/^https?:\/\/\S+$/i.test(line)) {
+        const a = make('a', null, line);
+        a.href = line;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer nofollow';
+        li.appendChild(a);
+      } else {
+        li.textContent = line;
+      }
+      list.appendChild(li);
+    });
+    return list;
+  }
+
+  function researchCard(r, i) {
+    const card = make('article', 'ts-card is-new');
+    card.style.animationDelay = Math.min(i, 5) * 70 + 'ms';
+    if (photoUrls[r.photo_path]) {
+      const img = make('img', 'ts-photo');
+      img.src = photoUrls[r.photo_path];
+      img.alt = r.photo_description || 'Image for ' + r.title;
+      img.loading = 'lazy';
+      img.onerror = () => img.remove();
+      card.appendChild(img);
+    }
+    const body = make('div', 'ts-body');
+    body.append(
+      make('p', 'ts-tag', r.topic),
+      make('h3', 'ts-name', r.title),
+      make('p', 'ts-meta', ['By ' + r.researcher_name, r.grade_level && r.grade_level !== 'Other' ? r.grade_level + ' grade' : null, r.school].filter(Boolean).join(' · ')),
+      make('p', 'ts-label', 'The question'),
+      make('p', 'ts-text', r.question),
+      make('p', 'ts-label', 'What they found'),
+      make('p', 'ts-text', r.findings)
+    );
+    // Shown only when the card is opened.
+    const more = make('div', 'rs-more');
+    more.append(
+      make('p', 'ts-label', 'How they researched it'),
+      make('p', 'ts-text', r.method),
+      make('p', 'ts-label', 'Why it matters'),
+      make('p', 'ts-text', r.why_important),
+      make('p', 'ts-label', 'Sources'),
+      sourceList(r.sources)
+    );
+    if (r.photo_description && photoUrls[r.photo_path]) more.appendChild(make('p', 'ts-caption', r.photo_description));
+    body.appendChild(more);
+    const toggle = make('button', 'ts-more', 'Read full research');
+    toggle.type = 'button';
+    toggle.addEventListener('click', () => {
+      toggle.textContent = card.classList.toggle('open') ? 'Show less' : 'Read full research';
+    });
+    body.appendChild(toggle);
+    card.appendChild(body);
+    return card;
+  }
+
+  function render() {
+    const shown = research.filter(r => topic === 'All' || r.topic === topic);
+    grid.replaceChildren(...shown.map(researchCard));
+    grid.removeAttribute('aria-busy');
+    empty.hidden = research.length > 0;
+  }
+
+  function renderFilters() {
+    const topics = [...new Set(research.map(r => r.topic))];
+    const bar = field('topicFilters');
+    bar.hidden = topics.length < 2;
+    bar.replaceChildren(...['All', ...topics].map(t => {
+      const chip = make('button', 'chip', t);
+      chip.type = 'button';
+      chip.setAttribute('aria-pressed', String(t === topic));
+      chip.addEventListener('click', () => {
+        topic = t;
+        bar.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c === chip)));
+        render();
+      });
+      return chip;
+    }));
+  }
+
+  async function loadResearch() {
+    if (!db) return fail();
+    const { data, error } = await db.rpc('get_approved_research');
+    if (error) { console.error('Could not load research:', error); return fail(); }
+    research = data;
+    const paths = research.map(r => r.photo_path).filter(Boolean);
+    photoUrls = {};
+    if (paths.length) {
+      const { data: signed, error: urlError } = await db.storage.from('research-photos').createSignedUrls(paths, 60 * 60 * 24);
+      if (urlError) console.error(urlError);
+      (signed || []).forEach(d => { if (d.signedUrl) photoUrls[d.path] = d.signedUrl; });
+    }
+    renderFilters();
+    render();
+  }
+
+  function fail() {
+    grid.replaceChildren();
+    grid.removeAttribute('aria-busy');
+    empty.textContent = "Research couldn't load right now. Please try again later.";
+    empty.hidden = false;
+  }
+
+  function showMessage(text, isError) {
+    msg.textContent = text;
+    msg.className = 'form-msg ' + (isError ? 'error' : 'ok');
+    msg.hidden = false;
+  }
+
+  MSG.onAuth(async session => {
+    currentUser = session ? session.user : null;
+    field('researchLogin').hidden = !!currentUser;
+    field('researchCard').hidden = !currentUser;
+    isAdmin = false;
+    if (currentUser) {
+      const [{ data: profile }, { data: admin }] = await Promise.all([
+        db.from('profiles').select('name, school').eq('id', currentUser.id).single(),
+        db.rpc('is_admin')
+      ]);
+      isAdmin = !!admin;
+      // Pre-fill your name and school from your account.
+      if (profile && profile.name && !field('researcherName').value) field('researcherName').value = profile.name;
+      if (profile && profile.school && !field('researchSchool').value) field('researchSchool').value = profile.school;
+    }
+  });
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!db || !currentUser) return showMessage('Please log in to add research.', true);
+    const file = field('photoFile').files[0];
+    if (file && file.size > 5 * 1024 * 1024) return showMessage('That image is larger than 5 MB. Please choose a smaller one.', true);
+
+    btn.disabled = true;
+    btn.textContent = file ? 'Uploading image...' : 'Submitting...';
+    msg.hidden = true;
+    try {
+      let photoPath = null;
+      if (file) {
+        const ext = (file.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 5) || 'jpg';
+        photoPath = currentUser.id + '/' + crypto.randomUUID() + '.' + ext;
+        const { error } = await db.storage.from('research-photos').upload(photoPath, file, { contentType: file.type || undefined });
+        if (error) throw error;
+        btn.textContent = 'Submitting...';
+      }
+      const val = id => field(id).value.trim();
+      const { error } = await db.from('research').insert({
+        researcher_name: val('researcherName'),
+        grade_level: val('gradeLevel') || null,
+        school: val('researchSchool'),
+        title: val('researchTitle'),
+        topic: val('researchTopic'),
+        question: val('researchQuestion'),
+        method: val('researchMethod'),
+        findings: val('researchFindings'),
+        why_important: val('whyImportant'),
+        sources: val('researchSources'),
+        photo_path: photoPath,
+        photo_description: val('photoDescription') || null,
+        permission: field('permission').checked
+      });
+      if (error) throw error;
+      const name = val('researcherName');
+      const school = val('researchSchool');
+      form.reset();
+      field('researcherName').value = name;
+      field('researchSchool').value = school;
+      if (isAdmin) {
+        showMessage('✓ Published! Your research is now live above.');
+        loadResearch();
+      } else {
+        showMessage('✓ Thank you! Your research was submitted and will appear once our team reviews it.');
+      }
+    } catch (err) {
+      console.error(err);
+      showMessage('Sorry, your research could not be submitted' + (err && err.message ? ': ' + err.message : '. Please try again.'), true);
+    }
+    btn.disabled = false;
+    btn.textContent = 'Submit Research →';
+  });
+
+  loadResearch();
+</script>
+</body>
+</html>

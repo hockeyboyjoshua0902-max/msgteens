@@ -39,6 +39,7 @@
       <li><a href="index.html">Home</a></li>
       <li><a href="stories.html">Wall of Fame</a></li>
       <li><a href="submit.html">Submit a Story</a></li>
+      <li><a href="research.html">Research</a></li>
       <li><a href="about.html">About</a></li>
       <li><a href="join.html" class="nav-cta" aria-current="page">Join Now</a></li>
     </ul>
@@ -156,6 +157,7 @@
         <a href="index.html">Home</a>
         <a href="stories.html">Wall of Fame</a>
         <a href="submit.html">Submit a Story</a>
+        <a href="research.html">Research</a>
         <a href="about.html">About</a>
         <a href="join.html">Join</a>
       </div>
@@ -175,7 +177,7 @@ const db = MSG.db;
   const msg = document.getElementById('formMsg');
   // After logging in, go back to the page that sent you here (only our own pages).
   const next = new URLSearchParams(location.search).get('next');
-  const nextPage = ['submit.html', 'stories.html', 'admin.html'].includes(next) ? next : null;
+  const nextPage = ['submit.html', 'research.html', 'stories.html', 'admin.html'].includes(next) ? next : null;
 
   function showMessage(text, isError) {
     msg.textContent = text;
