@@ -362,6 +362,8 @@ button.img-tile:focus-visible { outline: 3px solid var(--blue); outline-offset: 
 .perks strong { color: var(--black); }
 
 /* Leaderboard */
+.leader-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 460px); gap: 64px; align-items: center; }
+.leader-intro p:not(.eyebrow) { font-size: 17px; color: #555; margin-bottom: 28px; }
 .leaderboard { background: var(--black); color: var(--white); border-radius: var(--radius); padding: 32px; }
 .leaderboard h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--white); }
 .leaderboard-month { font-size: 13px; color: var(--grey); margin: 4px 0 16px; }
@@ -448,6 +450,8 @@ footer a:hover { text-decoration: underline; }
 @media (max-width: 1000px) {
   .ts-grid, .card-grid { grid-template-columns: 1fr 1fr; }
   .join-layout { grid-template-columns: 1fr; }
+  .leader-layout { grid-template-columns: 1fr; gap: 40px; }
+  .leader-intro { text-align: center; }
 }
 
 @media (max-width: 760px) {
