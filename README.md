@@ -92,6 +92,23 @@ update public.profiles set is_admin = true where email = 'you@example.com';
 - To create the table, run the whole `supabase/schema.sql` again in the SQL
   Editor (safe to re-run).
 
+### Likes & comments
+Every story card (home page and Wall of Fame) and the Gitanjali Rao article
+have a ♥ like button and a 💬 comments section. Anyone can see likes and
+comments; you need to be logged in to like or comment. Comments show only
+the commenter's first name. People can delete their own comments, and admins
+can delete anyone's (or delete rows in Table Editor → `comments`).
+- **No swear words:** the database refuses any comment containing a swear
+  word (including tricks like `sh1t`, `f*ck`, `f u c k`), and the site tells
+  the commenter to keep it kind. To block more words, edit the lists in
+  `has_swear_words` in `supabase/schema.sql` and run the file again.
+- To add likes/comments to a new article page, add
+  `MSG.reactions('article', '<page-name>', { open: true })` like
+  `gitanjali-rao.html` does, and add the page to the `nextPage` list in
+  `join.html` so logging in returns there.
+- To turn it on, run the whole `supabase/schema.sql` again in the SQL Editor
+  (safe to re-run).
+
 ### Local testing
 ```
 SUPABASE_URL=... SUPABASE_PUBLISHABLE_KEY=... node scripts/build-config.js

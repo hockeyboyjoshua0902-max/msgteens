@@ -147,7 +147,7 @@ const db = MSG.db;
   const msg = document.getElementById('formMsg');
   // After logging in, go back to the page that sent you here (only our own pages).
   const next = new URLSearchParams(location.search).get('next');
-  const nextPage = ['submit.html', 'research.html', 'stories.html', 'admin.html'].includes(next) ? next : null;
+  const nextPage = ['index.html', 'submit.html', 'research.html', 'stories.html', 'gitanjali-rao.html', 'admin.html'].includes(next) ? next : null;
 
   function showMessage(text, isError) {
     msg.textContent = text;

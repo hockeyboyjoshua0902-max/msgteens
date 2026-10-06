@@ -122,7 +122,7 @@
       more.addEventListener('click', () => {
         more.textContent = card.classList.toggle('open') ? 'Show less' : 'Read more';
       });
-      body.appendChild(more);
+      body.append(more, reactions('story', String(s.id)));
       card.appendChild(body);
       return card;
     }));
@@ -138,12 +138,179 @@
     return stories.length;
   }
 
+  // ── Likes & comments ──
+  // reactions(kind, id) returns a like button + comments section for one story
+  // ('story', its id) or article ('article', page name without .html).
+  // Pass { open: true } to show the comments straight away.
+  // The database refuses comments with swear words (see supabase/schema.sql).
+  const bars = [];
+  let refreshQueued = false;
+
+  // The log-in page sends people back here afterwards.
+  const joinUrl = () => 'join.html?next=' + encodeURIComponent(location.pathname.split('/').pop() || 'index.html');
+
+  function reactions(kind, id, { open = false } = {}) {
+    const root = make('div', 'react');
+    const row = make('div', 'react-row');
+    const like = make('button', 'react-btn react-like');
+    const talk = make('button', 'react-btn');
+    const panel = make('div', 'react-comments');
+    like.type = talk.type = 'button';
+    panel.hidden = true;
+    row.append(like, talk);
+    root.append(row, panel);
+
+    const bar = { kind, id, root, likes: 0, comments: 0, liked: false };
+    const draw = () => {
+      like.textContent = (bar.liked ? '♥ ' : '♡ ') + bar.likes;
+      like.setAttribute('aria-pressed', String(bar.liked));
+      like.setAttribute('aria-label', 'Like (' + bar.likes + (bar.likes === 1 ? ' like)' : ' likes)'));
+      talk.textContent = '💬 ' + bar.comments;
+      talk.setAttribute('aria-label', (panel.hidden ? 'Show' : 'Hide') + ' comments (' + bar.comments + ')');
+      talk.setAttribute('aria-expanded', String(!panel.hidden));
+    };
+    bar.draw = draw;
+
+    like.addEventListener('click', async () => {
+      if (!db) return;
+      if (!current) { location.href = joinUrl(); return; }
+      // Update straight away; undo if the database says no.
+      const was = bar.liked;
+      bar.liked = !was;
+      bar.likes += was ? -1 : 1;
+      draw();
+      like.disabled = true;
+      const { error } = was
+        ? await db.from('likes').delete().match({ item_type: kind, item_id: id, user_id: current.user.id })
+        : await db.from('likes').insert({ item_type: kind, item_id: id });
+      like.disabled = false;
+      if (error && error.code !== '23505') { // 23505 = already liked (e.g. in another tab)
+        console.error('Could not save like:', error);
+        bar.liked = was;
+        bar.likes += was ? 1 : -1;
+        draw();
+      }
+    });
+
+    talk.addEventListener('click', () => {
+      panel.hidden = !panel.hidden;
+      draw();
+      if (!panel.hidden) bar.renderComments();
+    });
+
+    bar.renderComments = async () => {
+      const list = make('ul', 'comment-list');
+      const status = make('p', 'comment-status', 'Loading comments...');
+      panel.replaceChildren(status, list, commentForm());
+      if (!db) { status.textContent = "Comments couldn't load right now."; return; }
+      const { data, error } = await db.rpc('get_comments', { kind, item: id });
+      if (error) { console.error('Could not load comments:', error); status.textContent = "Comments couldn't load right now."; return; }
+      bar.comments = data.length;
+      draw();
+      status.textContent = data.length ? '' : 'No comments yet. Be the first!';
+      status.hidden = data.length > 0;
+      list.replaceChildren(...data.map(c => {
+        const li = make('li', 'comment');
+        const head = make('p', 'comment-head');
+        head.append(make('strong', null, c.author || 'Member'),
+          make('span', 'comment-date', new Date(c.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })));
+        if (c.mine) {
+          const del = make('button', 'comment-delete', 'Delete');
+          del.type = 'button';
+          del.addEventListener('click', async () => {
+            if (!confirm('Delete this comment?')) return;
+            del.disabled = true;
+            const { error: delError } = await db.from('comments').delete().eq('id', c.id);
+            if (delError) { console.error(delError); del.disabled = false; return; }
+            bar.renderComments();
+          });
+          head.appendChild(del);
+        }
+        li.append(head, make('p', 'comment-body', c.body));
+        return li;
+      }));
+    };
+
+    function commentForm() {
+      if (!current) {
+        const p = make('p', 'comment-status');
+        const a = make('a', null, 'Log in');
+        a.href = joinUrl();
+        p.append(a, ' to like and comment.');
+        return p;
+      }
+      const form = make('form', 'comment-form');
+      const box = make('textarea');
+      box.maxLength = 1000;
+      box.rows = 2;
+      box.required = true;
+      box.placeholder = 'Write something kind...';
+      box.setAttribute('aria-label', 'Your comment');
+      const send = make('button', null, 'Post');
+      send.type = 'submit';
+      const msg = make('p', 'form-msg error');
+      msg.hidden = true;
+      msg.setAttribute('role', 'alert');
+      form.append(box, send, msg);
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const body = box.value.trim();
+        if (!body) return;
+        send.disabled = true;
+        msg.hidden = true;
+        const { error } = await db.from('comments').insert({ item_type: kind, item_id: id, body });
+        send.disabled = false;
+        if (error) {
+          console.error('Could not post comment:', error);
+          msg.textContent = error.hint === 'swear_words' ? error.message : "Your comment couldn't be posted. Please try again.";
+          msg.hidden = false;
+          return;
+        }
+        bar.renderComments();
+      });
+      return form;
+    }
+
+    draw();
+    bars.push(bar);
+    if (open) { panel.hidden = false; draw(); bar.renderComments(); }
+    queueRefresh();
+    return root;
+  }
+
+  // Load like/comment counts for every bar on the page in one request per kind.
+  function queueRefresh() {
+    if (refreshQueued) return;
+    refreshQueued = true;
+    setTimeout(async () => {
+      refreshQueued = false;
+      if (!db) return;
+      const live = bars.filter(b => b.root.isConnected);
+      for (const kind of new Set(live.map(b => b.kind))) {
+        const mine = live.filter(b => b.kind === kind);
+        const { data, error } = await db.rpc('get_reactions', { kind, items: mine.map(b => b.id) });
+        if (error) { console.error('Could not load likes:', error); continue; }
+        data.forEach(r => mine.filter(b => b.id === r.item_id).forEach(b => {
+          b.likes = r.likes; b.comments = r.comments; b.liked = r.liked;
+          b.draw();
+        }));
+      }
+    }, 0);
+  }
+
+  // Logging in or out changes "liked" and whether the comment box shows.
+  listeners.push(() => {
+    queueRefresh();
+    bars.forEach(b => { if (!b.root.querySelector('.react-comments').hidden) b.renderComments(); });
+  });
+
   window.MSG = {
     db,
     onAuth(fn) {
       listeners.push(fn);
       if (known) fn(current);
     },
-    loadStories
+    loadStories,
+    reactions
   };
 })();

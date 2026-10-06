@@ -436,3 +436,199 @@ drop policy if exists "Anyone can view approved research photos" on storage.obje
 create policy "Anyone can view approved research photos"
   on storage.objects for select to anon, authenticated
   using (bucket_id = 'research-photos' and public.is_approved_research_photo(name));
+
+-- ─────────────────────────────────────────────
+-- LIKES & COMMENTS on stories and articles.
+-- item_type says what kind of thing it is; item_id says which one:
+--   'story'   -> the story's id (e.g. '12')
+--   'article' -> the article page's name without .html (e.g. 'gitanjali-rao')
+-- Anyone can see like counts and comments; you must be logged in to like
+-- or comment. Comments with swear words are refused by the database.
+-- ─────────────────────────────────────────────
+
+-- Swear-word check used by comments. Catches common tricks too: capitals,
+-- l33t spelling (sh1t, a$$), stretched letters (fuuuck), symbols (f*ck)
+-- and spaced-out letters (f u c k). Whole-word entries (like "hell" or "ass")
+-- only match the whole word, so "hello" and "class" are fine.
+-- To block another word, add it to `whole_words` (exact word) or `anywhere`
+-- (blocked even inside longer words), then re-run this file.
+create or replace function public.has_swear_words(input text)
+returns boolean
+language plpgsql
+immutable
+set search_path = ''
+as $$
+declare
+  anywhere text := 'f+[u\*]*[c\*]+k|\mfu+k|\mfu+q|ph+u+c?k|sh[i\*]t|b+[i\*]+t+c+h|c+[u\*]+n+t'
+    || '|n+[i\*]+gg+(e+r|a+h?)|wh+o+r+e|sl+u+t|bastard|motherf|bollock|twat|dickhead|asshole'
+    || '|dumbass|jackass|smartass|badass|douche|wanker|faggot';
+  whole_words text := 'a+ss+(e+s|es)?|arse|d+a+m+n+(it|ed)?|dammit|goddamn(it)?|he+ll+|cr+a+p+(py|s)?'
+    || '|p+i+ss+(ed|ing)?|d+i+c+k+s?|c+o+c+k+s?|t+i+t+s?|titties|boobs?|wank(ing)?|fags?'
+    || '|retard(s|ed)?|pricks?|pussy|pussies|porn|horny|cum|wtf|stfu|omfg|lmfao';
+  pattern text := '(' || anywhere || ')|\m(' || whole_words || ')\M';
+  plain text := lower(coalesce(input, ''));
+  -- l33t spelling: 0->o 1->i 3->e 4->a 5->s 7->t 8->b @->a $->s !->i |->i
+  leet  text := translate(plain, '0134578@$!|', 'oieastbasii');
+  variant text;
+begin
+  foreach variant in array array[
+    plain,
+    leet,
+    -- join spaced-out single letters: "f u c k" / "f.u.c.k" -> "fuck"
+    regexp_replace(leet, '(?<![a-z\*])([a-z\*])[\s\.\-_,]+(?=[a-z\*](?![a-z\*]))', '\1', 'g')
+  ] loop
+    if variant ~ pattern then
+      return true;
+    end if;
+  end loop;
+  return false;
+end;
+$$;
+
+-- Which things can be liked/commented on (shared by both tables below).
+create or replace function public.is_reactable(kind text, item text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select case kind
+    when 'story'   then item ~ '^\d{1,18}$'
+                        and exists (select 1 from public.stories where id = item::bigint and status = 'approved')
+    when 'article' then item ~ '^[a-z0-9-]{1,100}$'
+    else false
+  end;
+$$;
+
+revoke all on function public.is_reactable(text, text) from public, anon;
+grant execute on function public.is_reactable(text, text) to authenticated;
+
+-- LIKES: one per person per item. Click again to unlike (delete the row).
+create table if not exists public.likes (
+  item_type   text not null check (item_type in ('story', 'article')),
+  item_id     text not null check (char_length(item_id) between 1 and 100),
+  user_id     uuid not null default auth.uid() references public.profiles (id) on delete cascade,
+  created_at  timestamptz not null default now(),
+  primary key (item_type, item_id, user_id)
+);
+
+create index if not exists likes_user_id_idx on public.likes (user_id);
+
+alter table public.likes enable row level security;
+
+revoke all on public.likes from anon, authenticated;
+grant select, delete on public.likes to authenticated;
+grant insert (item_type, item_id) on public.likes to authenticated;
+
+drop policy if exists "Users can see their own likes" on public.likes;
+create policy "Users can see their own likes"
+  on public.likes for select to authenticated
+  using ((select auth.uid()) = user_id);
+
+drop policy if exists "Users can like things" on public.likes;
+create policy "Users can like things"
+  on public.likes for insert to authenticated
+  with check ((select auth.uid()) = user_id and public.is_reactable(item_type, item_id));
+
+drop policy if exists "Users can unlike things" on public.likes;
+create policy "Users can unlike things"
+  on public.likes for delete to authenticated
+  using ((select auth.uid()) = user_id);
+
+-- COMMENTS: anyone logged in can comment; you can delete your own, and
+-- admins can delete anyone's (delete a row in Table Editor -> comments works too).
+create table if not exists public.comments (
+  id          bigint generated always as identity primary key,
+  created_at  timestamptz not null default now(),
+  user_id     uuid not null default auth.uid() references public.profiles (id) on delete cascade,
+  item_type   text not null check (item_type in ('story', 'article')),
+  item_id     text not null check (char_length(item_id) between 1 and 100),
+  body        text not null check (char_length(trim(body)) between 1 and 1000)
+);
+
+create index if not exists comments_item_idx on public.comments (item_type, item_id, created_at);
+create index if not exists comments_user_id_idx on public.comments (user_id);
+
+alter table public.comments enable row level security;
+
+revoke all on public.comments from anon, authenticated;
+grant select, delete on public.comments to authenticated;
+grant insert (item_type, item_id, body) on public.comments to authenticated;
+
+drop policy if exists "Users can see their own comments" on public.comments;
+create policy "Users can see their own comments"
+  on public.comments for select to authenticated
+  using ((select auth.uid()) = user_id or (select public.is_admin()));
+
+drop policy if exists "Users can comment" on public.comments;
+create policy "Users can comment"
+  on public.comments for insert to authenticated
+  with check ((select auth.uid()) = user_id and public.is_reactable(item_type, item_id));
+
+drop policy if exists "Users can delete their own comments" on public.comments;
+create policy "Users can delete their own comments"
+  on public.comments for delete to authenticated
+  using ((select auth.uid()) = user_id or (select public.is_admin()));
+
+-- The swear-word filter. Runs on every new comment, so it can't be skipped
+-- by going around the website. The site shows this message to the commenter.
+create or replace function public.comments_block_swear_words()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  new.body := trim(new.body);
+  if public.has_swear_words(new.body) then
+    raise exception 'Please keep it kind: comments can''t include swear words.'
+      using errcode = '22023', hint = 'swear_words';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists comments_block_swear_words on public.comments;
+create trigger comments_block_swear_words
+  before insert on public.comments
+  for each row execute function public.comments_block_swear_words();
+
+-- Like and comment counts for a list of items, plus whether you liked each.
+create or replace function public.get_reactions(kind text, items text[])
+returns table (item_id text, likes integer, comments integer, liked boolean)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select i.id,
+         (select count(*)::integer from public.likes l where l.item_type = kind and l.item_id = i.id),
+         (select count(*)::integer from public.comments c where c.item_type = kind and c.item_id = i.id),
+         exists (select 1 from public.likes l
+                 where l.item_type = kind and l.item_id = i.id and l.user_id = (select auth.uid()))
+  from unnest(items[1:200]) as i(id);
+$$;
+
+revoke all on function public.get_reactions(text, text[]) from public;
+grant execute on function public.get_reactions(text, text[]) to anon, authenticated;
+
+-- Comments on one item, oldest first, with the commenter's first name only
+-- (never their email, school or last name).
+create or replace function public.get_comments(kind text, item text)
+returns table (id bigint, created_at timestamptz, author text, body text, mine boolean)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select c.id, c.created_at, split_part(p.name, ' ', 1), c.body,
+         coalesce(c.user_id = (select auth.uid()), false) or (select public.is_admin())
+  from public.comments c
+  join public.profiles p on p.id = c.user_id
+  where c.item_type = kind and c.item_id = item
+  order by c.created_at
+  limit 500;
+$$;
+
+revoke all on function public.get_comments(text, text) from public;
+grant execute on function public.get_comments(text, text) to anon, authenticated;

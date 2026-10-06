@@ -79,6 +79,11 @@
       <p>What Gitanjali's story makes clear is not just that she is exceptional — it's that she was always exceptional, long before any adult recognized it. The achievements came from curiosity that was there at age 10, when she decided a water crisis was her problem to solve. The question adults should ask is: how many other kids like her are sitting in classrooms right now, waiting for someone to take their ideas seriously?</p>
     </div>
 
+    <section class="article-reactions" id="comments" aria-labelledby="commentsTitle">
+      <h2 id="commentsTitle">Likes &amp; comments</h2>
+      <div id="articleReactions"></div>
+    </section>
+
     <div class="article-footer">
       <a href="stories.html#featured" class="text-link">← Back to the Wall of Fame</a>
     </div>
@@ -119,5 +124,8 @@
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="app.js"></script>
+<script>
+document.getElementById('articleReactions').appendChild(MSG.reactions('article', 'gitanjali-rao', { open: true }));
+</script>
 </body>
 </html>

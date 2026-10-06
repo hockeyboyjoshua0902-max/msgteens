@@ -82,6 +82,7 @@
       <h2><a href="gitanjali-rao.html">Gitanjali Rao: The Teen Who Detected Lead in Water</a></h2>
       <p>At 11 years old, she invented Tethys — a device to detect lead in drinking water — after learning about the Flint Water Crisis. She then built Kindly, an AI app to detect cyberbullying. TIME named her their first-ever Kid of the Year. Today she studies at MIT.</p>
       <a class="text-link featured-link" href="gitanjali-rao.html">Read the full article →</a>
+      <div id="featuredReactions"></div>
     </div>
   </div>
 </section>
@@ -209,6 +210,7 @@
 <script src="app.js"></script>
 <script>
 MSG.loadStories({ grid: document.getElementById('tsGrid'), empty: document.getElementById('tsEmpty') });
+document.getElementById('featuredReactions').appendChild(MSG.reactions('article', 'gitanjali-rao'));
 
   // ── Teens in Action pop-up ──
   const dialog = document.getElementById('activityDialog');

@@ -290,6 +290,46 @@ button.img-tile:focus-visible { outline: 3px solid var(--blue); outline-offset: 
   line-height: 1.45; color: var(--black);
 }
 .article-footer { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--blue-light); }
+.article-reactions { margin-top: 56px; }
+.article-reactions h2 { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 12px; }
+
+/* ── LIKES & COMMENTS (built by app.js) ── */
+.react { margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--blue-pale); }
+.featured .react { margin-top: 24px; }
+.react-row { display: flex; gap: 10px; }
+.react-btn {
+  background: var(--white); border: 2px solid var(--blue-light); border-radius: 50px;
+  padding: 5px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+  color: var(--black); cursor: pointer; transition: background 0.2s, border-color 0.2s;
+}
+.react-btn:hover { border-color: var(--blue); }
+.react-like[aria-pressed="true"] { background: #ffe8ee; border-color: #e0245e; color: #c2185b; }
+.react-btn:disabled { cursor: default; }
+.react-comments { margin-top: 14px; display: flex; flex-direction: column; gap: 12px; }
+.react .comment-status { font-size: 14px; color: var(--grey); line-height: 1.5; }
+.comment-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.comment { background: var(--blue-pale); border-radius: 12px; padding: 10px 14px; }
+.react .comment-head { display: flex; align-items: baseline; gap: 8px; font-size: 14px; line-height: 1.4; color: var(--black); }
+.comment-date { color: var(--grey); font-size: 12px; }
+.comment-delete {
+  margin-left: auto; background: none; border: none; padding: 0; cursor: pointer;
+  color: var(--grey); font-family: 'DM Sans', sans-serif; font-size: 12px; text-decoration: underline;
+}
+.comment-delete:hover { color: var(--error); }
+.react .comment-body { font-size: 14px; line-height: 1.6; color: #333; white-space: pre-wrap; overflow-wrap: anywhere; margin-top: 2px; }
+.comment-form { display: flex; flex-wrap: wrap; gap: 8px; }
+.comment-form textarea {
+  flex: 1 1 200px; min-width: 0; border: 2px solid var(--blue-light); border-radius: 12px; padding: 8px 12px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; resize: vertical; outline: none;
+}
+.comment-form textarea:focus { border-color: var(--blue); }
+.comment-form button {
+  align-self: flex-end; background: var(--blue); color: var(--white); border: none; border-radius: 50px;
+  padding: 9px 20px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.comment-form button:hover { background: var(--blue-dark); }
+.comment-form button:disabled { opacity: 0.6; cursor: default; }
+.react .comment-form .form-msg { flex-basis: 100%; margin-top: 0; font-size: 14px; color: var(--error); }
 
 /* ── ABOUT ── */
 .prose p { font-size: 18px; line-height: 1.85; color: var(--text); }
